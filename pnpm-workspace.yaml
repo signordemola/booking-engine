@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "apps/*"
+  - "scenarios"
 
 minimumReleaseAge: 1440
 trustPolicy: no-downgrade

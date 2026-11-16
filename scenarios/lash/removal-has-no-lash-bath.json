@@ -1,0 +1,24 @@
+{
+  "id": "removal-has-no-lash-bath",
+  "title": "A client cannot add a lash bath to a lash removal",
+  "source": "https://www.fresha.com/help-center/knowledge-base/catalog/101649-create-service-add-ons",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "lash-removal",
+        "addOns": [{ "addOnId": "lash-bath", "quantity": 1 }]
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "quote.add-on-not-offered",
+        "message": "\"Lash removal\" does not offer the add-on \"lash-bath\"."
+      }
+    ]
+  }
+}
