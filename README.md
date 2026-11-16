@@ -6,7 +6,7 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 ## Status
 
-This project is at the start. **You cannot take a booking with it yet.** Two small parts work and are tested.
+This project is at the start. **You cannot take a booking with it yet.** Three small parts work and are tested.
 
 | Part                                                               | Status      |
 | ------------------------------------------------------------------ | ----------- |
@@ -24,6 +24,7 @@ What works today:
 
 - `parseSettings` checks a business's settings (services, add-ons, deposit rules) and returns plain errors an owner can read.
 - `percentageOf` takes a percentage of an amount, exact and rounded half-up.
+- `createQuote` turns the services and add-ons a client picked into line items and a total, and rejects a request the owner's settings do not allow.
 
 [PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.
 

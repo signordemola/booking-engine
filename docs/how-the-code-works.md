@@ -38,8 +38,35 @@ One job: the public function, `parseSettings`.
 
 - `settingsSchema` is the shape from file 2 plus the rules from file 3. `superRefine` is the Zod way to add rules that compare more than one field.
 - `parseSettings` runs that schema on the input. If it passes, it returns `{ ok: true, value }`. If not, it returns `{ ok: false, errors }`.
-- `toPathText` turns a location such as `["services", 0, "priceMinor"]` into the text `services[0].priceMinor`.
-- `toSettingsErrors` turns one Zod problem into the plain error an owner reads.
+
+## 5. `packages/core/src/lib/`
+
+Two small files that the settings code and the quote code share.
+
+- `result.ts`: the shape every public function returns. It is `{ ok: true, value }` or `{ ok: false, errors }`. Each error is a `Problem`: a path and a plain message.
+- `zod-problems.ts`: `toProblems` turns the problems Zod reports into that plain shape. For example, the location `["services", 0, "priceMinor"]` becomes the text `services[0].priceMinor`.
+
+## 6. `packages/core/src/quotes/quote-request-schema.ts`
+
+One job: describe the shape of a quote request. A request is what the client picked: a list of services, and for each service a list of add-ons with a quantity.
+
+## 7. `packages/core/src/quotes/find-requested-items.ts`
+
+One job: look up what the client picked in the owner's settings.
+
+- For each requested service, it finds the service in the settings. If it does not exist, it adds a problem.
+- For each requested add-on, it checks three things: the service offers it, it is listed once, and the quantity is not above the owner's maximum.
+- It returns the real services and add-ons, or the list of problems.
+
+## 8. `packages/core/src/quotes/create-quote.ts`
+
+One job: the public function, `createQuote(settings, request)`. It runs three steps.
+
+1. Check the shape of the request (file 6).
+2. Look up the picked items in the settings (file 7).
+3. Make one line item for each service and each add-on, then add the amounts to get the total.
+
+An add-on line costs its price times its quantity. Example: a hybrid full set (US$120) with a lash bath (US$10) gives two line items and a total of `13000`, which is US$130.
 
 ## The tests
 
