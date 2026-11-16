@@ -29,7 +29,7 @@ This project is at the start. **The engine does not work yet.**
 
 ## Development
 
-You need Node 24 or later and pnpm 12.
+You need Node 26 or later and pnpm 12.
 
 ```bash
 pnpm install
@@ -39,7 +39,7 @@ pnpm run format:check
 pnpm run test
 ```
 
-CI runs the same four checks on every push, on Node 24 and Node 26.
+CI runs the same four checks on every push, on Node 26.
 
 ## Layout
 
