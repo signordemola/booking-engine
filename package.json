@@ -1,0 +1,10 @@
+{
+  "name": "booking-engine",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@12.9.1",
+  "engines": {
+    "node": ">=24"
+  }
+}
