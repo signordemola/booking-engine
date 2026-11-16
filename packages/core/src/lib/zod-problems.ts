@@ -14,12 +14,17 @@ const toProblemsOfOneIssue = (issue: z.core.$ZodIssue): Problem[] => {
 
   if (issue.code === "unrecognized_keys") {
     return issue.keys.map((key) => ({
+      code: "input.unknown-field",
       path,
       message: `Remove "${key}". This engine does not know that field.`,
     }));
   }
 
-  return [{ path, message: issue.message }];
+  if (issue.code === "custom" && typeof issue.params?.code === "string") {
+    return [{ code: issue.params.code, path, message: issue.message }];
+  }
+
+  return [{ code: "input.invalid", path, message: issue.message }];
 };
 
 export const toProblems = (issues: z.core.$ZodIssue[]): Problem[] =>
