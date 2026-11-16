@@ -8,17 +8,19 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 This project is at the start. **You cannot take a booking with it yet.** Three small parts work and are tested.
 
-| Part                                                               | Status      |
-| ------------------------------------------------------------------ | ----------- |
-| Repo setup (TypeScript, tests, lint, CI)                           | Done        |
-| Business settings and quote: add-ons, deposit, tax, balance        | In progress |
-| Slots: hours, breaks, closures, gaps, lead time                    | Not started |
-| Bookings: no overlap, hold during payment, safe retries            | Not started |
-| Service rules: patch test, consultation, consent, fill or full set | Not started |
-| Policies: cancellation, refund, reschedule                         | Not started |
-| Automations: reminders, balance links, hold expiry                 | Not started |
-| Staff and levels, time zones and daylight saving                   | Not started |
-| Example apps                                                       | Not started |
+| Stage                                                             | Status      |
+| ----------------------------------------------------------------- | ----------- |
+| Repo setup (TypeScript, tests, lint, CI)                          | Done        |
+| Contracts: scenario files, operation shape, public API            | Next        |
+| Money: add-ons, deposit, tax, fees, balance                       | Started     |
+| Time: hours, breaks, closures, gaps, lead time, clock changes     | Not started |
+| Bookings: no overlap, hold during payment, safe retries           | Not started |
+| Rules: patch test, consultation, consent, fill or full set, staff | Not started |
+| Policies: cancellation, refund, reschedule                        | Not started |
+| Follow-ups: reminders, balance links, hold expiry                 | Not started |
+| First products: tools for AI agents, scenario pages               | Not started |
+
+[docs/architecture.md](./docs/architecture.md) explains the design: one core, many products. [docs/roadmap.md](./docs/roadmap.md) has each stage in detail.
 
 What works today:
 
@@ -53,8 +55,10 @@ CI runs the same four checks on every push, on Node 26.
 
 ```
 packages/core                 the engine
-docs/decisions                short records of the big choices and why
+docs/architecture.md          the design: one core, many products
+docs/roadmap.md               the stages and what each one proves
 docs/how-the-code-works.md    a reading guide to the code
+docs/decisions                short records of the big choices and why
 ```
 
 ## How this is built
