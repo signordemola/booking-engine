@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { parseSettings } from "./settings-schema.js";
+import { parseSettings } from "./parse-settings.js";
 
 const lashByNadia = {
   version: 1,
