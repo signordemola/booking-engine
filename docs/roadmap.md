@@ -1,0 +1,145 @@
+# Roadmap
+
+The plan for building the engine in [architecture.md](./architecture.md). It is a sequence, not a calendar: no stage has a date.
+
+## The order, and why
+
+1. **Contracts first.** They are hard to change later, and every stage after them is built on them.
+2. **Then the core, one area at a time.** Each stage ends when a real case runs as a scenario file.
+3. **Then thin products**, in the order that helps most: first the ones that cost little and show the engine to people.
+
+## Stages
+
+| Stage | Name           | Real case that proves it                                                          | Status      |
+| ----- | -------------- | --------------------------------------------------------------------------------- | ----------- |
+| 0     | Repo setup     | Checks run on every push                                                          | Done        |
+| 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Next        |
+| 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Started     |
+| 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Not started |
+| 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Not started |
+| 5     | Rules          | Only times at least 48 hours after the patch test                                 | Not started |
+| 6     | Policies       | "Non-refundable. Moves once."                                                     | Not started |
+| 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Not started |
+| 8     | First products | An AI assistant books a lash appointment and obeys the patch test rule            | Not started |
+
+Already built before this plan: exact percentages, the settings check, and quote totals.
+
+### Stage 1: Contracts
+
+- Scenario files: the format, four demo businesses (lash studio, salon, studio hire, photographer), and one test that runs every file.
+- The operation shape: settings, facts and request go in; an answer with reasons comes out. Errors get stable codes.
+- The public API: one entry file, and a test that fails when the list of exports changes by accident.
+- The import order between modules, enforced by the linter.
+- The settings shape published as a JSON Schema file.
+
+Done when: the homepage quote runs from a JSON file, and all checks are green.
+
+### Stage 2: Money
+
+- Deposit: none, percentage, fixed or full. The service rule wins over the business default. The answer names the rule it used.
+- Tax: added on top or included in the price; paid with each payment or with the balance. Several taxes show separately. Rounding happens once.
+- Fees, such as travel, due today or later.
+- Prices by the hour, with minimum and maximum hours.
+
+Done when these run as scenarios: the homepage example; a studio in British Columbia with two taxes; a UK studio with VAT in the price; a studio hire by the hour with an extra.
+
+### Stage 3: Time
+
+- One time module. It is the only code that touches `Temporal`.
+- Opening hours, breaks, days off and one-off closures.
+- Free start times: duration from the services and add-ons, gaps before and after, lead time, how far ahead a client can book, and existing bookings.
+- "Why not this time?": the reason a time is not offered.
+- Resources (a staff member or a room) from the start, so one resource is only a special case.
+- Days when the clocks change, in London and in Toronto.
+- A speed test with 10,000 bookings.
+
+Done when: the studio hire case and both clock-change days run as scenarios, and the speed test passes.
+
+### Stage 4: Bookings
+
+- Decide a booking: the engine returns what to save and which events happened.
+- A hold while the client pays, with an expiry. The booking is confirmed when the deposit is paid.
+- Status changes: pending, confirmed, completed, cancelled, no-show.
+- Retry keys, so a repeated request changes nothing.
+- The store: the three promises, an in-memory store that keeps them, and a test that sends 20 requests at the same moment.
+
+Done when: the photographer case runs as a scenario, and the parallel test gives exactly one booking.
+
+### Stage 5: Rules
+
+- Patch test before the first booking, with a gap in hours.
+- Consultation before a service.
+- Consent form signed before payment.
+- A service that must be booked alone.
+- Fill or full set, by the date of the last visit.
+- A deposit that differs for new clients.
+- Staff: a stylist who offers the service, with a price for each stylist or level.
+
+Done when: each "Built for" page on demolastudio.com has its promises as scenarios.
+
+### Stage 6: Policies
+
+- Cancellation: a notice period, and how much of the deposit is kept.
+- Refund amounts, with the tax inside a kept deposit.
+- Reschedule: a notice period and a limit on moves.
+
+Done when: "Non-refundable. Moves once." runs as a scenario, with a second move refused.
+
+### Stage 7: Follow-ups
+
+- What is due and when: the reminder the day before, the balance link, the top-up reminder, the end of a hold.
+- Each follow-up has a key, so it is done once.
+
+Done when: a scenario runs the same job twice and gets each message once.
+
+### Stage 8: First products
+
+1. A guide for AI coding tools, and JSON Schema files for every operation. Both are generated from the operations list, so they cannot go out of date.
+2. An AI agent tool server (MCP) over the operations, with a short demo.
+3. A page of scenarios in the docs, generated from the scenario files.
+
+After that, the next product depends on the next real opportunity:
+
+| If the next opportunity is        | Build next                                    |
+| --------------------------------- | --------------------------------------------- |
+| A client build on the engine      | The Postgres store                            |
+| Leads from demolastudio.com       | The policy simulator                          |
+| A job in AI evaluation            | The scenarios as a benchmark, with a write-up |
+| Other developers using the engine | A release on npm and two example apps         |
+
+## How each stage is built
+
+1. Research first: competitor help pages, official rules, and how open-source projects write that kind of code.
+2. Scenarios and tests first, then code.
+3. One small pull request per step. All four checks green. `PROGRESS.md` updated in the same pull request.
+4. The reading guide gets a section for each new module.
+5. A stage starts only after the one before it is approved.
+
+## Practice
+
+After each stage: a few challenges on that stage. Each challenge is a real case from a competitor's help page. The work is to write the owner's settings, work the answer by hand, write the scenario file, and extend the engine if it cannot do the case yet. Every finished challenge stays in the repo as a scenario.
+
+| Stage      | Interview topics it exercises                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
+| Contracts  | Generic types, JSON at the edge and types inside, compile time and runtime                                   |
+| Money      | Discriminated unions, exact arithmetic, rounding                                                             |
+| Time       | Time zones, daylight saving, overlapping ranges, binary search                                               |
+| Bookings   | `implements` and `extends`, `this` and `bind`, `Promise.all` and `Promise.allSettled`, retries, transactions |
+| Rules      | Plug-in design, open and closed sets of types                                                                |
+| Policies   | State machines, edge cases at a boundary                                                                     |
+| Follow-ups | Jobs that are safe to run twice                                                                              |
+| Products   | Tools for AI agents, versioned public APIs                                                                   |
+
+## Not planned yet
+
+A hosted API, a kit for agencies, a paid audit service, packages and memberships, waitlists, recurring bookings, calendar sync. Each needs a real customer or a second real case first.
+
+## Risks
+
+| Risk                                        | What we do about it                                                    |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| Too many paths at once                      | One core. A product starts only when the stage list reaches it.        |
+| Structure added before it is needed         | Each contract is as small as it can be. Stage 1 is three small steps.  |
+| The code grows faster than my understanding | Practice after each stage, the reading guide, and regular code style.  |
+| A contract turns out wrong                  | Versions stay below 1.0 until a real client build has used the engine. |
+| Limited time and power cuts                 | Every pull request leaves `main` working.                              |
