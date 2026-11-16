@@ -2,6 +2,23 @@
 
 Newest first. Updated at the end of every session.
 
+## 2026-11-17
+
+- Milestone: 2 - Business settings and Quote - in progress (2 of 7 phases done)
+- Done since the last entry:
+  - New direction: a booking engine for booking platforms, with the owner's rules as settings. Milestones revised; each one proves a real scenario as tests (first: US$120 service + US$10 add-on, deposit US$30, balance US$100).
+  - Phase 1, money: `percentageOf`, exact and rounded half-up, with the big.js library. Phase 2, settings: `parseSettings` checks the owner's settings (services, add-ons, deposit rules) and returns plain errors.
+  - Rewrote both in regular modern TypeScript after a comparison with Cal.com, Medusa, Zod and tRPC. Moved to Node 26 and the built-in `Temporal`. Added Dependabot and a rule that `main` only changes through a pull request with green checks.
+- Tests: 35 passing, 0 failing. CI is green on Node 26.
+- Learned (interview topics practised):
+  - Types are removed before the code runs, so Zod checks outside data at runtime; `z.infer` makes the type from the same schema.
+  - A discriminated union: the deposit rule has a `kind` field, and TypeScript narrows on it.
+  - Decimal numbers are wrong for money: `Math.round(amount * percent / 100)` was wrong by one cent in 50 of 2.6 million test cases.
+- Next step: phase 3, quote totals (services plus add-ons give line items and a total).
+- Blockers / questions: none
+
+Scale features (designed or built): settings carry a `version` and a `businessId` (built). Everything else is designed only.
+
 ## 2026-11-16
 
 - Milestone: 1 - Repo set up - done
@@ -17,5 +34,3 @@ Newest first. Updated at the end of every session.
   - A lockfile makes CI and my computer install the same versions; CI actions are pinned by commit SHA because a tag can move.
 - Next step: start Milestone 2 (services and availability rules, then slot listing), tests first.
 - Blockers / questions: decide on Dependabot and on a branch ruleset that requires green CI before a merge.
-
-Scale features (designed or built): none yet. Milestone 1 is tooling only.

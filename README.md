@@ -2,29 +2,36 @@
 
 Open-source TypeScript booking engine: availability, slots, no double bookings, deposits and time zones.
 
-It is the core logic a booking app needs, with no UI framework and no database inside. You connect your own database, payment provider and email service through small interfaces.
+It is a booking engine for booking platforms: one source of truth for availability, price, add-ons, deposits, tax and booking rules. The owner's rules are settings, so an admin screen can change them and no developer changes code. The platform brings its own database, payment provider, messages and screens.
 
 ## Status
 
-This project is at the start. **The engine does not work yet.**
+This project is at the start. **You cannot take a booking with it yet.** Two small parts work and are tested.
 
-| Part                                     | Status      |
-| ---------------------------------------- | ----------- |
-| Repo setup (TypeScript, tests, lint, CI) | Done        |
-| Services, availability rules, slot list  | Not started |
-| Bookings with no overlaps                | Not started |
-| Deposits, balances, cancellation policy  | Not started |
-| Time zones and daylight saving           | Not started |
-| Multiple staff and rooms                 | Not started |
-| Example apps                             | Not started |
+| Part                                                               | Status      |
+| ------------------------------------------------------------------ | ----------- |
+| Repo setup (TypeScript, tests, lint, CI)                           | Done        |
+| Business settings and quote: add-ons, deposit, tax, balance        | In progress |
+| Slots: hours, breaks, closures, gaps, lead time                    | Not started |
+| Bookings: no overlap, hold during payment, safe retries            | Not started |
+| Service rules: patch test, consultation, consent, fill or full set | Not started |
+| Policies: cancellation, refund, reschedule                         | Not started |
+| Automations: reminders, balance links, hold expiry                 | Not started |
+| Staff and levels, time zones and daylight saving                   | Not started |
+| Example apps                                                       | Not started |
 
-[PROGRESS.md](./PROGRESS.md) has the session log.
+What works today:
+
+- `parseSettings` checks a business's settings (services, add-ons, deposit rules) and returns plain errors an owner can read.
+- `percentageOf` takes a percentage of an amount, exact and rounded half-up.
+
+[PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.
 
 ## Design rules
 
 - **Pure core.** The engine does not call a database, a payment provider or the system clock directly. It uses interfaces, so each one can be replaced.
 - **Many businesses in one deployment.** Every record belongs to a business.
-- **Money as integers.** Amounts are in minor units (cents, kobo) with a currency code.
+- **Money as integers.** Amounts are whole numbers of minor units (cents, pence), with one currency per business.
 - **Time in UTC.** Each business has its own time zone.
 
 ## Development
@@ -44,8 +51,9 @@ CI runs the same four checks on every push, on Node 26.
 ## Layout
 
 ```
-packages/core     the engine
-docs/decisions    short records of the big choices and why
+packages/core                 the engine
+docs/decisions                short records of the big choices and why
+docs/how-the-code-works.md    a reading guide to the code
 ```
 
 ## How this is built
