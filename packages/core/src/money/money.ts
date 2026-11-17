@@ -6,3 +6,14 @@ export const percentageOf = (amountMinor: number, percent: number): number =>
     .div(100)
     .round(0, Big.roundHalfUp)
     .toNumber();
+
+export const includedTaxOf = (
+  amountWithTaxMinor: number,
+  percent: number,
+  totalPercent: number,
+): number =>
+  new Big(amountWithTaxMinor)
+    .times(percent)
+    .div(new Big(100).plus(totalPercent))
+    .round(0, Big.roundHalfUp)
+    .toNumber();

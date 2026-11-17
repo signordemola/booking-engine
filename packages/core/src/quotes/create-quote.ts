@@ -1,58 +1,40 @@
 import { z } from "zod";
-import type { Result } from "../lib/result.js";
+import type { Reason, Result } from "../lib/result.js";
 import { toProblems } from "../lib/zod-problems.js";
 import { settingsSchema } from "../settings/parse-settings.js";
-import type { Service } from "../settings/settings-schema.js";
+import { calculateDeposit, describeDepositRule } from "./calculate-deposit.js";
+import { calculateTax, describeTax, type TaxLine } from "./calculate-tax.js";
+import { findRequestedItems } from "./find-requested-items.js";
 import {
-  findRequestedItems,
-  type RequestedAddOn,
-} from "./find-requested-items.js";
+  toAddOnLineItem,
+  toFeeLineItem,
+  toServiceLineItem,
+  type LineItem,
+} from "./quote-line-items.js";
 import { quoteRequestSchema } from "./quote-request-schema.js";
-
-export type ServiceLineItem = {
-  kind: "service";
-  serviceId: string;
-  name: string;
-  amountMinor: number;
-};
-
-export type AddOnLineItem = {
-  kind: "add-on";
-  serviceId: string;
-  addOnId: string;
-  name: string;
-  unitPriceMinor: number;
-  quantity: number;
-  amountMinor: number;
-};
-
-export type LineItem = ServiceLineItem | AddOnLineItem;
 
 export type Quote = {
   currency: string;
+  pricesIncludeTax: boolean;
   lineItems: LineItem[];
+  subtotalMinor: number;
+  taxLines: TaxLine[];
   totalMinor: number;
+  dueToday: {
+    depositMinor: number;
+    feesMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+  };
+  balance: {
+    taxMinor: number;
+    totalMinor: number;
+  };
+  reasons: Reason[];
 };
 
-const toServiceLineItem = (service: Service): ServiceLineItem => ({
-  kind: "service",
-  serviceId: service.id,
-  name: service.name,
-  amountMinor: service.priceMinor,
-});
-
-const toAddOnLineItem = (
-  service: Service,
-  { addOn, quantity }: RequestedAddOn,
-): AddOnLineItem => ({
-  kind: "add-on",
-  serviceId: service.id,
-  addOnId: addOn.id,
-  name: addOn.name,
-  unitPriceMinor: addOn.priceMinor,
-  quantity,
-  amountMinor: addOn.priceMinor * quantity,
-});
+const sumOf = (amounts: number[]) =>
+  amounts.reduce((sum, amount) => sum + amount, 0);
 
 export const createQuoteInputSchema = z.strictObject({
   settings: settingsSchema,
@@ -71,14 +53,77 @@ export const createQuote = (input: unknown): Result<Quote> => {
     return requested;
   }
 
-  const lineItems = requested.value.flatMap(({ service, addOns }) => [
-    toServiceLineItem(service),
-    ...addOns.map((addOn) => toAddOnLineItem(service, addOn)),
-  ]);
-  const totalMinor = lineItems.reduce((sum, item) => sum + item.amountMinor, 0);
+  const lineItems: LineItem[] = [];
+  const reasons: Reason[] = [];
+
+  requested.value.services.forEach((requestedService) => {
+    const deposit = calculateDeposit(settings, requestedService);
+    const { service, addOns } = requestedService;
+
+    reasons.push({
+      code:
+        deposit.source === "service"
+          ? "deposit.service-rule"
+          : "deposit.default-rule",
+      path: `lineItems[${lineItems.length}]`,
+      message:
+        deposit.source === "service"
+          ? `"${service.name}" has its own deposit rule: ${describeDepositRule(deposit.rule)}.`
+          : `"${service.name}" uses the business deposit rule: ${describeDepositRule(deposit.rule)}.`,
+    });
+    lineItems.push(toServiceLineItem(requestedService, deposit.amountMinor));
+    lineItems.push(
+      ...addOns.map((addOn) => toAddOnLineItem(service.id, addOn)),
+    );
+  });
+  lineItems.push(...requested.value.fees.map(toFeeLineItem));
+
+  const subtotalMinor = sumOf(lineItems.map((item) => item.amountMinor));
+  const depositMinor = sumOf(
+    lineItems.map((item) => (item.kind === "service" ? item.depositMinor : 0)),
+  );
+  const feesDueTodayMinor = sumOf(
+    lineItems.map((item) =>
+      item.kind === "fee" && item.due === "today" ? item.amountMinor : 0,
+    ),
+  );
+  const dueTodayBeforeTaxMinor = depositMinor + feesDueTodayMinor;
+
+  const tax = calculateTax(settings.tax, subtotalMinor, dueTodayBeforeTaxMinor);
+  const totalMinor = tax.pricesIncludeTax
+    ? subtotalMinor
+    : subtotalMinor + tax.taxMinor;
+  const dueTodayMinor = tax.pricesIncludeTax
+    ? dueTodayBeforeTaxMinor
+    : dueTodayBeforeTaxMinor + tax.taxDueTodayMinor;
+
+  reasons.push(
+    ...describeTax(settings.tax).map((reason) => ({
+      ...reason,
+      path: "taxLines",
+    })),
+  );
 
   return {
     ok: true,
-    value: { currency: settings.currency, lineItems, totalMinor },
+    value: {
+      currency: settings.currency,
+      pricesIncludeTax: tax.pricesIncludeTax,
+      lineItems,
+      subtotalMinor,
+      taxLines: tax.taxLines,
+      totalMinor,
+      dueToday: {
+        depositMinor,
+        feesMinor: feesDueTodayMinor,
+        taxMinor: tax.taxDueTodayMinor,
+        totalMinor: dueTodayMinor,
+      },
+      balance: {
+        taxMinor: tax.taxMinor - tax.taxDueTodayMinor,
+        totalMinor: totalMinor - dueTodayMinor,
+      },
+      reasons,
+    },
   };
 };

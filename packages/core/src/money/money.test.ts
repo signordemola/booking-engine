@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { percentageOf } from "./money.js";
+import { includedTaxOf, percentageOf } from "./money.js";
 
 test.each([
   { amountMinor: 12000, percent: 25, expected: 3000 },
@@ -16,5 +16,27 @@ test.each([
   "$percent% of $amountMinor is $expected",
   ({ amountMinor, percent, expected }) => {
     expect(percentageOf(amountMinor, percent)).toBe(expected);
+  },
+);
+
+test.each([
+  { amountWithTaxMinor: 27000, percent: 20, totalPercent: 20, expected: 4500 },
+  { amountWithTaxMinor: 9500, percent: 20, totalPercent: 20, expected: 1583 },
+  { amountWithTaxMinor: 12000, percent: 20, totalPercent: 20, expected: 2000 },
+  {
+    amountWithTaxMinor: 1000,
+    percent: 13.5,
+    totalPercent: 13.5,
+    expected: 119,
+  },
+  { amountWithTaxMinor: 11500, percent: 5, totalPercent: 15, expected: 500 },
+  { amountWithTaxMinor: 11500, percent: 10, totalPercent: 15, expected: 1000 },
+  { amountWithTaxMinor: 0, percent: 20, totalPercent: 20, expected: 0 },
+])(
+  "a price of $amountWithTaxMinor that includes $totalPercent% tax holds $expected at $percent%",
+  ({ amountWithTaxMinor, percent, totalPercent, expected }) => {
+    expect(includedTaxOf(amountWithTaxMinor, percent, totalPercent)).toBe(
+      expected,
+    );
   },
 );

@@ -5,24 +5,28 @@ const lashByNadia = {
   version: 1,
   businessId: "lash-by-nadia",
   currency: "USD",
+  tax: { kind: "none" },
   defaultDeposit: { kind: "none" },
   services: [
     {
       id: "hybrid-full-set",
       name: "Hybrid full set",
-      priceMinor: 12000,
+      price: { kind: "fixed", amountMinor: 12000 },
       deposit: { kind: "percentage", percent: 25 },
       addOnIds: ["lash-bath"],
     },
     {
       id: "lash-removal",
       name: "Lash removal",
-      priceMinor: 2500,
+      price: { kind: "fixed", amountMinor: 2500 },
       addOnIds: [],
     },
   ],
   addOns: [
     { id: "lash-bath", name: "Lash bath", priceMinor: 1000, maxQuantity: 1 },
+  ],
+  fees: [
+    { id: "home-visit", name: "Home visit", amountMinor: 2000, due: "today" },
   ],
 };
 
@@ -54,7 +58,7 @@ test.each([
 test("accepts a free service", () => {
   const input = {
     ...lashByNadia,
-    services: [{ ...lashRemoval, priceMinor: 0 }],
+    services: [{ ...lashRemoval, price: { kind: "fixed", amountMinor: 0 } }],
   };
   expect(parseSettings(input).ok).toBe(true);
 });
@@ -79,9 +83,11 @@ test.each([
     code: "input.invalid",
     input: {
       ...lashByNadia,
-      services: [{ ...hybridFullSet, priceMinor: 120.5 }],
+      services: [
+        { ...hybridFullSet, price: { kind: "fixed", amountMinor: 120.5 } },
+      ],
     },
-    path: "services[0].priceMinor",
+    path: "services[0].price.amountMinor",
     message:
       "Enter the amount as a whole number of minor units, for example 12000 for 120.00.",
   },
@@ -208,12 +214,18 @@ test("reports every problem at once, so the owner can fix them in one pass", () 
   const input = {
     ...lashByNadia,
     currency: "dollars",
-    services: [{ ...hybridFullSet, name: "", priceMinor: 120.5 }],
+    services: [
+      {
+        ...hybridFullSet,
+        name: "",
+        price: { kind: "fixed", amountMinor: 120.5 },
+      },
+    ],
   };
   expect(errorsFor(input).map((error) => error.path)).toEqual([
     "currency",
     "services[0].name",
-    "services[0].priceMinor",
+    "services[0].price.amountMinor",
   ]);
 });
 
