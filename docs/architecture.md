@@ -103,7 +103,7 @@ The in-memory store proves these promises in tests, with many requests at the sa
 | `slots`      | Free start times from hours, closures, gaps, notice and busy times           | Built    |
 | `bookings`   | Decide a booking, a hold, a status change                                    | Built    |
 | `rules`      | Patch test, consultation, consent, book-alone, fill or full set, new clients | Built    |
-| `policies`   | Cancellation, refund, reschedule                                             | Designed |
+| `policies`   | Cancellation, refund, reschedule (the code is in `bookings/`)                | Built    |
 | `follow-ups` | What message or action is due, and when                                      | Designed |
 
 Imports go one way: `lib`, then `money`, then `settings`, then the feature modules. The linter will enforce the order.

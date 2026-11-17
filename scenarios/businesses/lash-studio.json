@@ -209,5 +209,17 @@
       "id": "tests-and-consultations-alone",
       "serviceIds": ["patch-test", "brow-consultation"]
     }
-  ]
+  ],
+  "policy": {
+    "cancellation": {
+      "kind": "non-refundable"
+    },
+    "noShowKeeps": {
+      "kind": "paid"
+    },
+    "reschedule": {
+      "noticeHours": 48,
+      "maxMoves": 1
+    }
+  }
 }

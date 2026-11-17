@@ -1,0 +1,70 @@
+{
+  "id": "cancel-in-time-refunds-the-retainer",
+  "title": "A client who cancels 15 days ahead gets the \u00a375 retainer back",
+  "source": "https://www.demolastudio.com/for/photographers",
+  "business": "photographer",
+  "operation": "booking.cancel",
+  "facts": {
+    "now": "2026-12-03T10:00:00Z",
+    "paidMinor": 7500
+  },
+  "request": {
+    "booking": {
+      "businessId": "clara-monet-photography",
+      "bookingId": "booking-1001",
+      "clientId": "client-amelia",
+      "resourceId": "clara",
+      "status": "confirmed",
+      "start": "2026-12-18T10:00:00Z",
+      "end": "2026-12-18T11:30:00Z",
+      "blockedStart": "2026-12-18T09:30:00Z",
+      "blockedEnd": "2026-12-18T12:00:00Z",
+      "holdExpiresAt": null,
+      "createdAt": "2026-11-17T15:00:00Z",
+      "currency": "GBP",
+      "totalMinor": 25000,
+      "dueTodayMinor": 7500,
+      "services": [
+        {
+          "serviceId": "portrait-session",
+          "addOns": []
+        }
+      ],
+      "moveCount": 0,
+      "policy": {
+        "cancellation": {
+          "kind": "notice",
+          "noticeHours": 336,
+          "lateCancelKeeps": {
+            "kind": "percentage",
+            "percent": 50
+          }
+        },
+        "noShowKeeps": {
+          "kind": "percentage",
+          "percent": 100
+        },
+        "reschedule": {
+          "noticeHours": 168,
+          "maxMoves": 1
+        }
+      }
+    },
+    "kind": "client-cancel"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "money": {
+        "keptMinor": 0,
+        "refundMinor": 7500,
+        "chargeMinor": 0
+      },
+      "reasons": [
+        {
+          "code": "cancellation.in-time"
+        }
+      ]
+    }
+  }
+}

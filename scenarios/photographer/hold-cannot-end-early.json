@@ -22,7 +22,32 @@
       "createdAt": "2026-11-17T10:00:00Z",
       "currency": "GBP",
       "totalMinor": 25000,
-      "dueTodayMinor": 7500
+      "dueTodayMinor": 7500,
+      "services": [
+        {
+          "serviceId": "portrait-session",
+          "addOns": []
+        }
+      ],
+      "moveCount": 0,
+      "policy": {
+        "cancellation": {
+          "kind": "notice",
+          "noticeHours": 336,
+          "lateCancelKeeps": {
+            "kind": "percentage",
+            "percent": 50
+          }
+        },
+        "noShowKeeps": {
+          "kind": "percentage",
+          "percent": 100
+        },
+        "reschedule": {
+          "noticeHours": 168,
+          "maxMoves": 1
+        }
+      }
     },
     "action": "expire-hold"
   },

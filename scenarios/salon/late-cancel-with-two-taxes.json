@@ -1,0 +1,74 @@
+{
+  "id": "late-cancel-with-two-taxes",
+  "title": "A late salon cancel keeps half of CA$275.94, with GST and QST inside",
+  "source": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/g300-6-8/deposits-gst-300-6-8.html",
+  "business": "salon",
+  "operation": "booking.cancel",
+  "facts": {
+    "now": "2026-12-17T20:00:00Z",
+    "paidMinor": 6899
+  },
+  "request": {
+    "booking": {
+      "businessId": "atelier-rosa",
+      "bookingId": "booking-3001",
+      "clientId": "client-lea",
+      "resourceId": "camille",
+      "status": "confirmed",
+      "start": "2026-12-18T15:00:00Z",
+      "end": "2026-12-18T18:00:00Z",
+      "blockedStart": "2026-12-18T15:00:00Z",
+      "blockedEnd": "2026-12-18T18:10:00Z",
+      "holdExpiresAt": null,
+      "createdAt": "2026-11-17T15:00:00Z",
+      "currency": "CAD",
+      "totalMinor": 27594,
+      "dueTodayMinor": 6899,
+      "services": [
+        {
+          "serviceId": "balayage",
+          "addOns": []
+        }
+      ],
+      "moveCount": 0,
+      "policy": {
+        "cancellation": {
+          "kind": "notice",
+          "noticeHours": 24,
+          "lateCancelKeeps": {
+            "kind": "percentage",
+            "percent": 50
+          }
+        },
+        "noShowKeeps": {
+          "kind": "percentage",
+          "percent": 100
+        },
+        "reschedule": {
+          "noticeHours": 24,
+          "maxMoves": 2
+        }
+      }
+    },
+    "kind": "client-cancel"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "money": {
+        "keptMinor": 13797,
+        "chargeMinor": 6898,
+        "taxInKept": [
+          {
+            "taxId": "gst",
+            "amountMinor": 600
+          },
+          {
+            "taxId": "qst",
+            "amountMinor": 1197
+          }
+        ]
+      }
+    }
+  }
+}

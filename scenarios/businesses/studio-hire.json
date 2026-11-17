@@ -125,5 +125,21 @@
       "serviceIds": ["daylight-studio"],
       "formVersion": "2026-03"
     }
-  ]
+  ],
+  "policy": {
+    "cancellation": {
+      "kind": "notice",
+      "noticeHours": 72,
+      "lateCancelKeeps": {
+        "kind": "paid"
+      }
+    },
+    "noShowKeeps": {
+      "kind": "paid"
+    },
+    "reschedule": {
+      "noticeHours": 72,
+      "maxMoves": 1
+    }
+  }
 }

@@ -93,6 +93,19 @@ export class InMemoryBookingStore implements BookingStore {
       return { kind: "conflict" };
     }
 
+    const taken =
+      occupiesSlot(booking.status) &&
+      [...bookings.values()].some(
+        (other) =>
+          other.bookingId !== booking.bookingId &&
+          other.resourceId === booking.resourceId &&
+          occupiesSlot(other.status) &&
+          overlaps(other, booking),
+      );
+    if (taken) {
+      return { kind: "conflict" };
+    }
+
     bookings.set(booking.bookingId, booking);
     return { kind: "saved" };
   }

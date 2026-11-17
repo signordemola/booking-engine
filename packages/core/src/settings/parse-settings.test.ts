@@ -184,6 +184,39 @@ test.each([
     message: "Choose a deposit kind: none, percentage, fixed or full.",
   },
   {
+    problem: "a cancellation kind that does not exist",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      policy: { ...lashByNadia.policy, cancellation: { kind: "flexible" } },
+    },
+    path: "policy.cancellation.kind",
+    message: "Choose a cancellation kind: non-refundable or notice.",
+  },
+  {
+    problem: "a late fee kind that does not exist",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      policy: { ...lashByNadia.policy, noShowKeeps: { kind: "double" } },
+    },
+    path: "policy.noShowKeeps.kind",
+    message: "Choose what is kept: paid, percentage or fixed.",
+  },
+  {
+    problem: "a move limit below zero",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      policy: {
+        ...lashByNadia.policy,
+        reschedule: { noticeHours: 48, maxMoves: -1 },
+      },
+    },
+    path: "policy.reschedule.maxMoves",
+    message: "Enter a whole number, 0 or more.",
+  },
+  {
     problem: "an add-on that can never be picked",
     code: "input.invalid",
     input: {

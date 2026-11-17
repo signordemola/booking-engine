@@ -1,0 +1,63 @@
+{
+  "id": "one-reschedule-within-the-policy",
+  "title": "One reschedule within the policy: a session that moved once cannot move again",
+  "source": "https://www.demolastudio.com/for/photographers",
+  "business": "photographer",
+  "operation": "booking.reschedule",
+  "facts": {
+    "now": "2026-11-17T10:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "booking": {
+      "businessId": "clara-monet-photography",
+      "bookingId": "booking-1001",
+      "clientId": "client-amelia",
+      "resourceId": "clara",
+      "status": "confirmed",
+      "start": "2026-12-18T10:00:00Z",
+      "end": "2026-12-18T11:30:00Z",
+      "blockedStart": "2026-12-18T09:30:00Z",
+      "blockedEnd": "2026-12-18T12:00:00Z",
+      "holdExpiresAt": null,
+      "createdAt": "2026-11-17T15:00:00Z",
+      "currency": "GBP",
+      "totalMinor": 25000,
+      "dueTodayMinor": 7500,
+      "services": [
+        {
+          "serviceId": "portrait-session",
+          "addOns": []
+        }
+      ],
+      "moveCount": 1,
+      "policy": {
+        "cancellation": {
+          "kind": "notice",
+          "noticeHours": 336,
+          "lateCancelKeeps": {
+            "kind": "percentage",
+            "percent": 50
+          }
+        },
+        "noShowKeeps": {
+          "kind": "percentage",
+          "percent": 100
+        },
+        "reschedule": {
+          "noticeHours": 168,
+          "maxMoves": 1
+        }
+      }
+    },
+    "start": "2026-12-25T10:00:00Z"
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "reschedule.limit-reached"
+      }
+    ]
+  }
+}

@@ -2,6 +2,25 @@
 
 Newest first. Updated at the end of every session.
 
+## 2026-11-17 (stage 6)
+
+- Milestone: roadmap stage 6 - Policies - done. Stage 7 - Follow-ups - next, after a reading break of 2 to 3 days.
+- Done:
+  - Policies are settings: non-refundable or a notice period; what a late cancel and a no-show keep (what was paid, a percentage of the total, or a fixed amount); a reschedule notice and a limit on moves. Each booking keeps a copy of its policy and a move count.
+  - `decideCancellation` gives what is kept, refunded and still to charge, with the tax inside the kept amount (the Canada Revenue Agency rule for a kept deposit). `decideReschedule` moves a confirmed booking with the same slot check as a new booking, so the patch test rule still applies.
+  - The store cancels and moves bookings. Two clients who move into the same free time at the same moment: exactly one gets it. "Non-refundable. Moves once." runs as scenarios: US$30 kept, first move accepted, second move refused.
+- Tests: 370 passing, 0 failing (294 in the engine, 26 in the store, 50 for the scenario files; 49 real cases). Ten planted bugs, all caught after one new test.
+- Learned (interview topics practised):
+  - A copy beats a link: a booking keeps the policy it was made with, so a later settings change cannot change what a client agreed to.
+  - A boundary needs two tests: a cancel exactly 336 hours before is in time, one minute later is late.
+  - A move must be checked where it is saved, like a new booking: two moves into the same time both read "free" first.
+- Next step: read the code (plan below), then start stage 7, follow-ups.
+- Reading plan for the break:
+  - Day 1: `docs/architecture.md`, `docs/roadmap.md`, then `docs/how-the-code-works.md` up to Time. Open each file it names.
+  - Day 2: Rules, Slots, Bookings and Policies in the reading guide, with their tests (`*.test.ts` next to each file). Run `pnpm run test` and break one line on purpose to see a test fail.
+  - Day 3: `packages/store`, `scenarios/` (open five JSON files), and the decision records 0011 to 0016. Write down every question.
+- Blockers / questions: none. Not built: a policy for each service, a fee for a move, a move to another staff member, a copy of the tax rates on the booking.
+
 ## 2026-11-17
 
 - Milestone: roadmap stage 5 - Rules - done. Stage 6 - Policies - next. (The plan is `docs/roadmap.md`: stages 1 to 8.)

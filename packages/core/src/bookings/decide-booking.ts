@@ -102,6 +102,9 @@ export const decideBooking = (input: unknown): Result<BookingDecision> => {
     currency: quote.value.currency,
     totalMinor: quote.value.totalMinor,
     dueTodayMinor: quote.value.dueToday.totalMinor,
+    services: request.services,
+    moveCount: 0,
+    policy: settings.policy,
   };
 
   return {

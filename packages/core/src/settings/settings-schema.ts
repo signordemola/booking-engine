@@ -240,6 +240,47 @@ const ruleSchema = z.discriminatedUnion(
   { error: ruleKindMessage },
 );
 
+const countMessage = "Enter a whole number, 0 or more.";
+const countSchema = z
+  .int({ error: countMessage })
+  .nonnegative({ error: countMessage });
+const keepKindMessage = "Choose what is kept: paid, percentage or fixed.";
+const cancellationKindMessage =
+  "Choose a cancellation kind: non-refundable or notice.";
+
+const keepRuleSchema = z.discriminatedUnion(
+  "kind",
+  [
+    z.strictObject({ kind: z.literal("paid") }),
+    z.strictObject({ kind: z.literal("percentage"), percent: percentSchema }),
+    z.strictObject({
+      kind: z.literal("fixed"),
+      amountMinor: amountMinorSchema,
+    }),
+  ],
+  { error: keepKindMessage },
+);
+const cancellationSchema = z.discriminatedUnion(
+  "kind",
+  [
+    z.strictObject({ kind: z.literal("non-refundable") }),
+    z.strictObject({
+      kind: z.literal("notice"),
+      noticeHours: countSchema,
+      lateCancelKeeps: keepRuleSchema,
+    }),
+  ],
+  { error: cancellationKindMessage },
+);
+export const policySchema = z.strictObject({
+  cancellation: cancellationSchema,
+  noShowKeeps: keepRuleSchema,
+  reschedule: z.strictObject({
+    noticeHours: countSchema,
+    maxMoves: countSchema,
+  }),
+});
+
 const scheduleSchema = z.strictObject({
   slotStepMinutes: wholeNumberSchema,
   minNoticeMinutes: minutesSchema,
@@ -265,6 +306,7 @@ export const settingsShapeSchema = z.strictObject({
   resources: z.array(resourceSchema),
   closures: z.array(closureSchema),
   rules: z.array(ruleSchema),
+  policy: policySchema,
 });
 
 export { weekdays };
@@ -285,4 +327,6 @@ export type Rule = z.infer<typeof ruleSchema>;
 export type PrerequisiteRule = z.infer<typeof prerequisiteRuleSchema>;
 export type ConsentRule = z.infer<typeof consentRuleSchema>;
 export type FillWindowRule = z.infer<typeof fillWindowRuleSchema>;
+export type KeepRule = z.infer<typeof keepRuleSchema>;
+export type Policy = z.infer<typeof policySchema>;
 export type BusinessSettings = z.infer<typeof settingsShapeSchema>;

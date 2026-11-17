@@ -100,5 +100,23 @@
     }
   ],
   "closures": [],
-  "rules": []
+  "rules": [],
+  "policy": {
+    "cancellation": {
+      "kind": "notice",
+      "noticeHours": 336,
+      "lateCancelKeeps": {
+        "kind": "percentage",
+        "percent": 50
+      }
+    },
+    "noShowKeeps": {
+      "kind": "percentage",
+      "percent": 100
+    },
+    "reschedule": {
+      "noticeHours": 168,
+      "maxMoves": 1
+    }
+  }
 }

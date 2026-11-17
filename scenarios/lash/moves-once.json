@@ -1,0 +1,80 @@
+{
+  "id": "moves-once",
+  "title": "Moves once: the full set moves from Saturday to Friday at the same price",
+  "source": "https://www.demolastudio.com/",
+  "business": "lash-studio",
+  "operation": "booking.reschedule",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [
+        {
+          "ruleId": "patch-test-for-lashes",
+          "at": "2026-11-17T16:00:00Z"
+        }
+      ],
+      "consents": []
+    }
+  },
+  "request": {
+    "booking": {
+      "businessId": "lash-by-nadia",
+      "bookingId": "booking-2001",
+      "clientId": "client-maya",
+      "resourceId": "nadia",
+      "status": "confirmed",
+      "start": "2026-11-21T16:00:00Z",
+      "end": "2026-11-21T18:45:00Z",
+      "blockedStart": "2026-11-21T16:00:00Z",
+      "blockedEnd": "2026-11-21T19:00:00Z",
+      "holdExpiresAt": null,
+      "createdAt": "2026-11-17T15:00:00Z",
+      "currency": "USD",
+      "totalMinor": 13000,
+      "dueTodayMinor": 3000,
+      "services": [
+        {
+          "serviceId": "hybrid-full-set",
+          "addOns": [
+            {
+              "addOnId": "lash-bath",
+              "quantity": 1
+            }
+          ]
+        }
+      ],
+      "moveCount": 0,
+      "policy": {
+        "cancellation": {
+          "kind": "non-refundable"
+        },
+        "noShowKeeps": {
+          "kind": "paid"
+        },
+        "reschedule": {
+          "noticeHours": 48,
+          "maxMoves": 1
+        }
+      }
+    },
+    "start": "2026-11-20T19:00:00Z"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "start": "2026-11-20T19:00:00Z",
+        "end": "2026-11-20T21:45:00Z",
+        "moveCount": 1,
+        "totalMinor": 13000
+      },
+      "events": [
+        {
+          "type": "booking.moved"
+        }
+      ]
+    }
+  }
+}

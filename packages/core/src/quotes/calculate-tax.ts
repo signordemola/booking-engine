@@ -59,6 +59,23 @@ export const calculateTax = (
   };
 };
 
+export const taxInside = (
+  tax: TaxSettings,
+  amountWithTaxMinor: number,
+): TaxLine[] => {
+  if (tax.kind === "none") {
+    return [];
+  }
+
+  const totalPercent = sumOf(tax.rates.map((rate) => rate.percent));
+  return tax.rates.map((rate) => ({
+    taxId: rate.id,
+    name: rate.name,
+    percent: rate.percent,
+    amountMinor: includedTaxOf(amountWithTaxMinor, rate.percent, totalPercent),
+  }));
+};
+
 export const describeTax = (
   tax: TaxSettings,
 ): { code: string; message: string }[] => {

@@ -160,7 +160,7 @@ Both public functions call `findBlockers`, so a time that `listSlots` offers is 
 
 The question: "may this booking go ahead, and what must be saved?". The engine decides. It never saves.
 
-`booking-schema.ts`. The shape of a booking record: ids, a status, the start and end, the blocked time (the booking plus its gaps), when the hold runs out, and the amounts. It also lists the six statuses and the five actions. `occupiesSlot` says which statuses keep their time: all except `cancelled` and `expired`.
+`booking-schema.ts`. The shape of a booking record: ids, a status, the start and end, the blocked time (the booking plus its gaps), when the hold runs out, the amounts, the services, the number of moves and a copy of the policy. It also lists the six statuses and the five actions. `occupiesSlot` says which statuses keep their time: all except `cancelled` and `expired`.
 
 `decide-booking.ts`. The public function `decideBooking({ settings, facts, request })`. It runs these steps:
 
@@ -171,6 +171,20 @@ The question: "may this booking go ahead, and what must be saved?". The engine d
 5. Return the record, the quote and one event (`booking.held` or `booking.confirmed`).
 
 `apply-booking-action.ts`. The public function `applyBookingAction`. A table lists each action, the statuses it can start from, and the status it leads to. An action from a wrong status is refused. Three actions also check the time: a hold cannot end early, an appointment cannot be completed before it ends, and a no-show cannot be marked before the start.
+
+## Policies: cancel and move, in `packages/core/src/bookings/`
+
+The question: "the client cancels, does not come, or wants another time: what happens?". The policy is in the settings, and each booking keeps a copy of it in `booking.policy`. So a later change in the settings does not change an existing booking.
+
+`decide-cancellation.ts`. The public function `decideCancellation({ settings, facts: { now, paidMinor }, request: { booking, kind } })`. `kind` is `client-cancel`, `business-cancel` or `no-show`. It runs these steps:
+
+1. Check the input.
+2. Change the status with `applyBookingAction` (`cancel` or `mark-no-show`). So the same table of allowed moves applies.
+3. `decideWhatIsKept` picks the rule and the reason. A hold that was never paid keeps nothing. A business cancel keeps nothing. A no-show uses `noShowKeeps`. A non-refundable policy keeps what was paid. A notice policy keeps nothing if the client cancelled in time, and uses `lateCancelKeeps` if not.
+4. `amountKept` turns the rule into an amount: what was paid, a percentage of the total, or a fixed amount capped at the total.
+5. Return the money: what was paid, what is kept, what is refunded, what is still to charge, and the tax inside the kept amount.
+
+`decide-reschedule.ts`. The public function `decideReschedule({ settings, facts, request: { booking, start } })`. It refuses a booking that is not confirmed, a booking that has used all its moves, and a move inside the notice period. Then it runs `checkSlot` on the new time with the same services and staff member. So every rule of a new booking still applies. If the time is free, it shifts the four times by the same amount and adds one to `moveCount`.
 
 ## The store: `packages/store/`
 
@@ -193,6 +207,8 @@ Each business has its own `Map`, so one business can never read another's bookin
 `find-free-slots.ts`. The workflow `findFreeSlots`: release the holds that ran out, read the busy times (without the client's own hold), then ask the engine for the slot list.
 
 `change-booking.ts`. The workflow `changeBooking`: load the booking, ask the engine to apply the action, then save with the status it read.
+
+`cancel-booking.ts` and `reschedule-booking.ts`. The same three steps for a cancel and a move. A move reads the busy times without the booking itself, so a booking can move to a time that overlaps its own old time. `saveBookingChange` also refuses a change whose new time overlaps another booking. So two clients who move into the same free time at the same moment cannot both get it; `policies.test.ts` proves it.
 
 Why the store must enforce the overlap rule: when 20 requests arrive together, all 20 read "free" before any of them saves. The engine says yes to all 20. Only the store, at the moment of saving, can let one through and refuse 19. `book-slot.test.ts` proves it.
 

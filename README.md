@@ -6,7 +6,7 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 ## Status
 
-This project is at the start. **You cannot take a booking with it yet.** It can price a booking, list the free times and decide a booking, and an in-memory store saves bookings safely. It has no database store yet, and no cancellation rules.
+This project is at the start. **You cannot take a booking with it yet.** It can price a booking, list the free times and decide a booking, and an in-memory store saves bookings safely. It can also cancel and move a booking by the owner's policy. It has no database store yet, and it does not send reminders.
 
 | Stage                                                             | Status      |
 | ----------------------------------------------------------------- | ----------- |
@@ -16,8 +16,8 @@ This project is at the start. **You cannot take a booking with it yet.** It can 
 | Time: hours, breaks, closures, gaps, lead time, clock changes     | Done        |
 | Bookings: no overlap, hold during payment, safe retries           | Done        |
 | Rules: patch test, consultation, consent, fill or full set, staff | Done        |
-| Policies: cancellation, refund, reschedule                        | Next        |
-| Follow-ups: reminders, balance links, hold expiry                 | Not started |
+| Policies: cancellation, refund, reschedule                        | Done        |
+| Follow-ups: reminders, balance links, hold expiry                 | Next        |
 | First products: tools for AI agents, scenario pages               | Not started |
 
 [docs/architecture.md](./docs/architecture.md) explains the design: one core, many products. [docs/roadmap.md](./docs/roadmap.md) has each stage in detail.
@@ -30,6 +30,7 @@ What works today:
 - Time zones are handled with the built-in `Temporal` API, with tests for the days when the clocks change in Toronto and in London.
 - `decideBooking` decides a booking: it checks the time, prices it and returns the record to save. A booking with money due today is held, and it is confirmed when the deposit is paid. `applyBookingAction` moves a booking between statuses.
 - Booking rules are settings: a patch test or a consultation that must come first (with a waiting time and a validity), a consent form signed before the booking, services that must be booked alone, a fill window after a full set, a deposit rule for new clients, and a price for each staff level. The slot list only offers times that satisfy the rules, and says why a day is empty.
+- Policies are settings: a non-refundable deposit or a notice period, what a late cancel and a no-show keep (what was paid, a percentage or a fixed amount), and a reschedule notice with a limit on moves. `decideCancellation` says what is kept, refunded and still to charge, with the tax inside the kept amount. `decideReschedule` moves a booking if the policy and the new time allow it. Each booking keeps a copy of the policy it was made with.
 - `packages/store` saves bookings safely. A test sends 20 requests for the same time at the same moment, and exactly 1 gets it. A retry with the same booking id makes no second booking. A time a client picks is held for the minutes the owner sets, and it is free again the moment the hold runs out. It has an in-memory store; a Postgres store comes later.
 - Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 
