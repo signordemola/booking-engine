@@ -1,0 +1,42 @@
+{
+  "id": "date-is-held-until-the-retainer-is-paid",
+  "title": "A portrait date is held for 30 minutes, not confirmed, until the retainer is paid",
+  "source": "https://www.demolastudio.com/for/photographers",
+  "business": "photographer",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T10:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "bookingId": "booking-1001",
+    "clientId": "client-amelia",
+    "start": "2026-11-20T10:00:00Z",
+    "services": [
+      {
+        "serviceId": "portrait-session",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "status": "pending",
+        "resourceId": "clara",
+        "end": "2026-11-20T11:30:00Z",
+        "blockedStart": "2026-11-20T09:30:00Z",
+        "blockedEnd": "2026-11-20T12:00:00Z",
+        "holdExpiresAt": "2026-11-17T10:30:00Z",
+        "totalMinor": 25000,
+        "dueTodayMinor": 7500
+      },
+      "events": [
+        {
+          "type": "booking.held"
+        }
+      ]
+    }
+  }
+}

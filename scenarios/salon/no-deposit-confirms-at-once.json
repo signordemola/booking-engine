@@ -1,0 +1,38 @@
+{
+  "id": "no-deposit-confirms-at-once",
+  "title": "A service with nothing to pay today is confirmed at once",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-10T15:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "bookingId": "booking-2001",
+    "clientId": "client-jules",
+    "start": "2026-11-18T11:15:00-05:00",
+    "services": [
+      {
+        "serviceId": "fringe-trim",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "status": "confirmed",
+        "resourceId": "camille",
+        "holdExpiresAt": null,
+        "dueTodayMinor": 0
+      },
+      "events": [
+        {
+          "type": "booking.confirmed"
+        }
+      ]
+    }
+  }
+}
