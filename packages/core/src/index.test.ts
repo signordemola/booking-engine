@@ -7,6 +7,7 @@ test("the public API is exactly this list", () => {
     "checkSlot",
     "createQuote",
     "decideBooking",
+    "isHoldOver",
     "listSlots",
     "occupiesSlot",
     "operations",

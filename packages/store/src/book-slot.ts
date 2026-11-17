@@ -38,6 +38,7 @@ export const bookSlot = async ({
     };
   }
 
+  await store.expireHolds(settings.businessId, now);
   const busy = await store.findBusyTimes(settings.businessId);
   const decision = decideBooking({ settings, facts: { now, busy }, request });
   if (!decision.ok) {

@@ -49,3 +49,5 @@ export const checkSlotInputSchema = z.strictObject({
 
 export type SlotFacts = z.infer<typeof slotFactsSchema>;
 export type BusyTime = z.infer<typeof busyTimeSchema>;
+
+export type SlotRequest = z.input<typeof listSlotsInputSchema>["request"];

@@ -1,4 +1,5 @@
 import {
+  isHoldOver,
   occupiesSlot,
   type Booking,
   type BookingStatus,
@@ -24,14 +25,32 @@ export class InMemoryBookingStore implements BookingStore {
     return bookings;
   }
 
-  async findBusyTimes(businessId: string): Promise<BusyTime[]> {
+  async findBusyTimes(
+    businessId: string,
+    exceptBookingId?: string,
+  ): Promise<BusyTime[]> {
     return [...this.#bookingsOf(businessId).values()]
       .filter((booking) => occupiesSlot(booking.status))
+      .filter((booking) => booking.bookingId !== exceptBookingId)
       .map((booking) => ({
         resourceId: booking.resourceId,
         start: booking.blockedStart,
         end: booking.blockedEnd,
       }));
+  }
+
+  async expireHolds(businessId: string, now: string): Promise<Booking[]> {
+    const bookings = this.#bookingsOf(businessId);
+    const expired = [...bookings.values()]
+      .filter((booking) => isHoldOver(booking, now))
+      .map((booking): Booking => ({
+        ...booking,
+        status: "expired",
+        holdExpiresAt: null,
+      }));
+
+    expired.forEach((booking) => bookings.set(booking.bookingId, booking));
+    return expired;
   }
 
   async findBooking(

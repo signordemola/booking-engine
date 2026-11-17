@@ -5,4 +5,5 @@ export type {
   SaveNewResult,
 } from "./booking-store.js";
 export { changeBooking } from "./change-booking.js";
+export { findFreeSlots } from "./find-free-slots.js";
 export { InMemoryBookingStore } from "./in-memory-booking-store.js";

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requestedServicesSchema } from "../quotes/quote-request-schema.js";
 import { settingsSchema } from "../settings/parse-settings.js";
 import { slotFactsSchema } from "../slots/slot-input-schema.js";
-import { isInstantText } from "../time/time.js";
+import { isInstantText, toEpochMs } from "../time/time.js";
 
 const instantMessage = "Use an exact moment such as 2026-11-21T15:00:00Z.";
 const amountMessage = "Enter the amount as a whole number of minor units.";
@@ -97,3 +97,8 @@ export type BookingEvent = {
 
 export const occupiesSlot = (status: BookingStatus): boolean =>
   status !== "cancelled" && status !== "expired";
+
+export const isHoldOver = (booking: Booking, now: string): boolean =>
+  booking.status === "pending" &&
+  booking.holdExpiresAt !== null &&
+  toEpochMs(booking.holdExpiresAt) <= toEpochMs(now);

@@ -3,6 +3,7 @@ export {
   type BookingChange,
 } from "./bookings/apply-booking-action.js";
 export {
+  isHoldOver,
   occupiesSlot,
   type Booking,
   type BookingAction,
@@ -28,7 +29,11 @@ export type { QuoteRequest } from "./quotes/quote-request-schema.js";
 export { parseSettings } from "./settings/parse-settings.js";
 export { checkSlot, type SlotCheck } from "./slots/check-slot.js";
 export { listSlots, type Slot, type SlotList } from "./slots/list-slots.js";
-export type { BusyTime, SlotFacts } from "./slots/slot-input-schema.js";
+export type {
+  BusyTime,
+  SlotFacts,
+  SlotRequest,
+} from "./slots/slot-input-schema.js";
 export type {
   AddOn,
   BusinessSettings,
