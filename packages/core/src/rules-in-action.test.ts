@@ -1,9 +1,6 @@
 import { expect, test } from "vitest";
-import { decideBooking } from "../bookings/decide-booking.js";
-import { createQuote } from "../quotes/create-quote.js";
-import { checkSlot } from "../slots/check-slot.js";
-import { listSlots } from "../slots/list-slots.js";
-import { hireStudio, lashStudio, salon } from "../testing/demo-businesses.js";
+import { checkSlot, createQuote, decideBooking, listSlots } from "./index.js";
+import { hireStudio, lashStudio, salon } from "./testing/demo-businesses.js";
 
 const tuesdayMorning = "2026-11-17T15:00:00Z";
 const noHistory = { visits: [], prerequisites: [], consents: [] };
