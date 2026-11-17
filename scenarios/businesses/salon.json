@@ -62,6 +62,7 @@
     "slotStepMinutes": 15,
     "minNoticeMinutes": 60,
     "maxAdvanceDays": 90,
+    "holdMinutes": 10,
     "gaps": {
       "beforeMinutes": 0,
       "afterMinutes": 10

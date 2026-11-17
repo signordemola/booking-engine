@@ -22,7 +22,7 @@ const busyTimeSchema = z.strictObject({
   end: instantSchema,
 });
 
-const slotFactsSchema = z.strictObject({
+export const slotFactsSchema = z.strictObject({
   now: instantSchema,
   busy: z.array(busyTimeSchema),
 });
