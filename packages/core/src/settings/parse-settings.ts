@@ -6,15 +6,18 @@ import {
   type BusinessSettings,
 } from "./settings-schema.js";
 
-const settingsSchema = settingsShapeSchema.superRefine((settings, context) => {
-  findSettingsProblems(settings).forEach((problem) => {
-    context.addIssue({
-      code: "custom",
-      path: problem.path,
-      message: problem.message,
+export const settingsSchema = settingsShapeSchema.superRefine(
+  (settings, context) => {
+    findSettingsProblems(settings).forEach((problem) => {
+      context.addIssue({
+        code: "custom",
+        path: problem.path,
+        message: problem.message,
+        params: { code: problem.code },
+      });
     });
-  });
-});
+  },
+);
 
 export const parseSettings = (input: unknown): Result<BusinessSettings> => {
   const result = settingsSchema.safeParse(input);

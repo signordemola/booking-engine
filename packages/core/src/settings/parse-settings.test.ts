@@ -62,18 +62,21 @@ test("accepts a free service", () => {
 test.each([
   {
     problem: "a version this engine cannot read",
+    code: "input.invalid",
     input: { ...lashByNadia, version: 2 },
     path: "version",
     message: "This engine reads settings version 1.",
   },
   {
     problem: "a currency in small letters",
+    code: "input.invalid",
     input: { ...lashByNadia, currency: "usd" },
     path: "currency",
     message: "Use a 3-letter currency code in capitals, for example USD.",
   },
   {
     problem: "a price with decimals",
+    code: "input.invalid",
     input: {
       ...lashByNadia,
       services: [{ ...hybridFullSet, priceMinor: 120.5 }],
@@ -84,6 +87,7 @@ test.each([
   },
   {
     problem: "a negative price",
+    code: "input.invalid",
     input: { ...lashByNadia, addOns: [{ ...lashBath, priceMinor: -1000 }] },
     path: "addOns[0].priceMinor",
     message:
@@ -91,12 +95,14 @@ test.each([
   },
   {
     problem: "a service with no name",
+    code: "input.invalid",
     input: { ...lashByNadia, services: [{ ...hybridFullSet, name: "" }] },
     path: "services[0].name",
     message: "Enter a name.",
   },
   {
     problem: "a deposit of 0%",
+    code: "input.invalid",
     input: {
       ...lashByNadia,
       services: [
@@ -108,6 +114,7 @@ test.each([
   },
   {
     problem: "a deposit of 101%",
+    code: "input.invalid",
     input: {
       ...lashByNadia,
       defaultDeposit: { kind: "percentage", percent: 101 },
@@ -117,24 +124,28 @@ test.each([
   },
   {
     problem: "a deposit kind that does not exist",
+    code: "input.invalid",
     input: { ...lashByNadia, defaultDeposit: { kind: "half" } },
     path: "defaultDeposit.kind",
     message: "Choose a deposit kind: none, percentage, fixed or full.",
   },
   {
     problem: "an add-on that can never be picked",
+    code: "input.invalid",
     input: { ...lashByNadia, addOns: [{ ...lashBath, maxQuantity: 0 }] },
     path: "addOns[0].maxQuantity",
     message: "Enter a whole number, 1 or more.",
   },
   {
     problem: "a setting this engine does not know",
+    code: "input.unknown-field",
     input: { ...lashByNadia, depositt: { kind: "none" } },
     path: "",
     message: 'Remove "depositt". This engine does not know that field.',
   },
   {
     problem: "a fixed deposit above the price of the service",
+    code: "settings.fixed-deposit-above-price",
     input: {
       ...lashByNadia,
       services: [
@@ -147,6 +158,7 @@ test.each([
   {
     problem:
       "a default fixed deposit above the price of a service that uses it",
+    code: "settings.fixed-deposit-above-price",
     input: {
       ...lashByNadia,
       defaultDeposit: { kind: "fixed", amountMinor: 3000 },
@@ -157,6 +169,7 @@ test.each([
   },
   {
     problem: "a service that lists an add-on that does not exist",
+    code: "settings.missing-add-on",
     input: {
       ...lashByNadia,
       services: [{ ...hybridFullSet, addOnIds: ["brow-tint"] }],
@@ -167,6 +180,7 @@ test.each([
   },
   {
     problem: "two services with the same id",
+    code: "settings.repeated-id",
     input: {
       ...lashByNadia,
       services: [hybridFullSet, { ...lashRemoval, id: "hybrid-full-set" }],
@@ -177,6 +191,7 @@ test.each([
   },
   {
     problem: "two add-ons with the same id",
+    code: "settings.repeated-id",
     input: {
       ...lashByNadia,
       addOns: [lashBath, { ...lashBath, name: "Lash shampoo" }],
@@ -185,8 +200,8 @@ test.each([
     message:
       'The id "lash-bath" is used more than once. Each id must be different.',
   },
-])("rejects $problem", ({ input, path, message }) => {
-  expect(errorsFor(input)).toEqual([{ path, message }]);
+])("rejects $problem", ({ input, code, path, message }) => {
+  expect(errorsFor(input)).toEqual([{ code, path, message }]);
 });
 
 test("reports every problem at once, so the owner can fix them in one pass", () => {

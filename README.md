@@ -6,13 +6,13 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 ## Status
 
-This project is at the start. **You cannot take a booking with it yet.** Three small parts work and are tested.
+This project is at the start. **You cannot take a booking with it yet.** A few small parts work and are tested.
 
 | Stage                                                             | Status      |
 | ----------------------------------------------------------------- | ----------- |
 | Repo setup (TypeScript, tests, lint, CI)                          | Done        |
-| Contracts: scenario files, operation shape, public API            | Next        |
-| Money: add-ons, deposit, tax, fees, balance                       | Started     |
+| Contracts: scenario files, operation shape, public API            | Done        |
+| Money: add-ons, deposit, tax, fees, balance                       | Next        |
 | Time: hours, breaks, closures, gaps, lead time, clock changes     | Not started |
 | Bookings: no overlap, hold during payment, safe retries           | Not started |
 | Rules: patch test, consultation, consent, fill or full set, staff | Not started |
@@ -27,6 +27,7 @@ What works today:
 - `parseSettings` checks a business's settings (services, add-ons, deposit rules) and returns plain errors an owner can read.
 - `percentageOf` takes a percentage of an amount, exact and rounded half-up.
 - `createQuote` turns the services and add-ons a client picked into line items and a total, and rejects a request the owner's settings do not allow.
+- Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 
 [PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.
 
@@ -55,6 +56,7 @@ CI runs the same four checks on every push, on Node 26.
 
 ```
 packages/core                 the engine
+scenarios                     real cases as data files, run as tests
 docs/architecture.md          the design: one core, many products
 docs/roadmap.md               the stages and what each one proves
 docs/how-the-code-works.md    a reading guide to the code

@@ -1,0 +1,31 @@
+{
+  "id": "full-set-with-lash-bath",
+  "title": "A hybrid full set with a lash bath costs US$130",
+  "source": "https://www.demolastudio.com",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": [{ "addOnId": "lash-bath", "quantity": 1 }]
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "currency": "USD",
+      "lineItems": [
+        { "kind": "service", "name": "Hybrid full set", "amountMinor": 12000 },
+        {
+          "kind": "add-on",
+          "name": "Lash bath",
+          "quantity": 1,
+          "amountMinor": 1000
+        }
+      ],
+      "totalMinor": 13000
+    }
+  }
+}

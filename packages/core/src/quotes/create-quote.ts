@@ -1,6 +1,8 @@
+import { z } from "zod";
 import type { Result } from "../lib/result.js";
 import { toProblems } from "../lib/zod-problems.js";
-import type { BusinessSettings, Service } from "../settings/settings-schema.js";
+import { settingsSchema } from "../settings/parse-settings.js";
+import type { Service } from "../settings/settings-schema.js";
 import {
   findRequestedItems,
   type RequestedAddOn,
@@ -52,16 +54,19 @@ const toAddOnLineItem = (
   amountMinor: addOn.priceMinor * quantity,
 });
 
-export const createQuote = (
-  settings: BusinessSettings,
-  input: unknown,
-): Result<Quote> => {
-  const request = quoteRequestSchema.safeParse(input);
-  if (!request.success) {
-    return { ok: false, errors: toProblems(request.error.issues) };
+export const createQuoteInputSchema = z.strictObject({
+  settings: settingsSchema,
+  request: quoteRequestSchema,
+});
+
+export const createQuote = (input: unknown): Result<Quote> => {
+  const parsed = createQuoteInputSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, errors: toProblems(parsed.error.issues) };
   }
 
-  const requested = findRequestedItems(settings, request.data);
+  const { settings, request } = parsed.data;
+  const requested = findRequestedItems(settings, request);
   if (!requested.ok) {
     return requested;
   }

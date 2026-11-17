@@ -1,6 +1,10 @@
 import type { BusinessSettings } from "./settings-schema.js";
 
-export type SettingsProblem = { path: (string | number)[]; message: string };
+export type SettingsProblem = {
+  code: string;
+  path: (string | number)[];
+  message: string;
+};
 
 const findRepeatedIds = (
   listName: string,
@@ -12,6 +16,7 @@ const findRepeatedIds = (
     const firstIndex = items.findIndex((other) => other.id === item.id);
     if (firstIndex !== index) {
       problems.push({
+        code: "settings.repeated-id",
         path: [listName, index, "id"],
         message: `The id "${item.id}" is used more than once. Each id must be different.`,
       });
@@ -29,6 +34,7 @@ const findMissingAddOns = (settings: BusinessSettings): SettingsProblem[] => {
     service.addOnIds.forEach((addOnId, addOnIndex) => {
       if (!knownAddOnIds.includes(addOnId)) {
         problems.push({
+          code: "settings.missing-add-on",
           path: ["services", serviceIndex, "addOnIds", addOnIndex],
           message: `"${service.name}" lists the add-on "${addOnId}", which does not exist.`,
         });
@@ -53,6 +59,7 @@ const findFixedDepositsAbovePrice = (
       ownDeposit.amountMinor > service.priceMinor
     ) {
       problems.push({
+        code: "settings.fixed-deposit-above-price",
         path: ["services", index, "deposit"],
         message: `The fixed deposit of "${service.name}" is more than its price.`,
       });
@@ -64,6 +71,7 @@ const findFixedDepositsAbovePrice = (
       defaultDeposit.amountMinor > service.priceMinor
     ) {
       problems.push({
+        code: "settings.fixed-deposit-above-price",
         path: ["services", index],
         message: `The default fixed deposit is more than the price of "${service.name}".`,
       });

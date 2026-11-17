@@ -23,7 +23,8 @@ export const findRequestedItems = (
 
     if (!service) {
       problems.push({
-        path: `services[${serviceIndex}].serviceId`,
+        code: "quote.unknown-service",
+        path: `request.services[${serviceIndex}].serviceId`,
         message: `The service "${requested.serviceId}" does not exist.`,
       });
       return;
@@ -32,7 +33,7 @@ export const findRequestedItems = (
     const addOns: RequestedAddOn[] = [];
 
     requested.addOns.forEach(({ addOnId, quantity }, addOnIndex) => {
-      const path = `services[${serviceIndex}].addOns[${addOnIndex}]`;
+      const path = `request.services[${serviceIndex}].addOns[${addOnIndex}]`;
       const addOn = settings.addOns.find((item) => item.id === addOnId);
       const firstIndex = requested.addOns.findIndex(
         (item) => item.addOnId === addOnId,
@@ -40,6 +41,7 @@ export const findRequestedItems = (
 
       if (!addOn || !service.addOnIds.includes(addOnId)) {
         problems.push({
+          code: "quote.add-on-not-offered",
           path: `${path}.addOnId`,
           message: `"${service.name}" does not offer the add-on "${addOnId}".`,
         });
@@ -48,6 +50,7 @@ export const findRequestedItems = (
 
       if (firstIndex !== addOnIndex) {
         problems.push({
+          code: "quote.add-on-repeated",
           path: `${path}.addOnId`,
           message: `The add-on "${addOnId}" is listed more than once. Use the quantity.`,
         });
@@ -56,6 +59,7 @@ export const findRequestedItems = (
 
       if (quantity > addOn.maxQuantity) {
         problems.push({
+          code: "quote.quantity-above-maximum",
           path: `${path}.quantity`,
           message: `The most you can add of "${addOn.name}" is ${addOn.maxQuantity}.`,
         });

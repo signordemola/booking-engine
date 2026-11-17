@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "businessId": "lash-by-nadia",
+  "currency": "USD",
+  "defaultDeposit": { "kind": "none" },
+  "services": [
+    {
+      "id": "hybrid-full-set",
+      "name": "Hybrid full set",
+      "priceMinor": 12000,
+      "deposit": { "kind": "percentage", "percent": 25 },
+      "addOnIds": ["lash-bath", "aftercare-kit"]
+    },
+    {
+      "id": "lash-removal",
+      "name": "Lash removal",
+      "priceMinor": 2500,
+      "addOnIds": []
+    }
+  ],
+  "addOns": [
+    {
+      "id": "lash-bath",
+      "name": "Lash bath",
+      "priceMinor": 1000,
+      "maxQuantity": 1
+    },
+    {
+      "id": "aftercare-kit",
+      "name": "Aftercare kit",
+      "priceMinor": 1800,
+      "maxQuantity": 3
+    }
+  ]
+}

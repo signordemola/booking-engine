@@ -43,8 +43,8 @@ One job: the public function, `parseSettings`.
 
 Two small files that the settings code and the quote code share.
 
-- `result.ts`: the shape every public function returns. It is `{ ok: true, value }` or `{ ok: false, errors }`. Each error is a `Problem`: a path and a plain message.
-- `zod-problems.ts`: `toProblems` turns the problems Zod reports into that plain shape. For example, the location `["services", 0, "priceMinor"]` becomes the text `services[0].priceMinor`.
+- `result.ts`: the shape every public function returns. It is `{ ok: true, value }` or `{ ok: false, errors }`. Each error is a `Problem`: a stable code such as `quote.unknown-service`, a path, and a plain message.
+- `zod-problems.ts`: `toProblems` turns the problems Zod reports into that plain shape. For example, the location `["request", "services", 0, "serviceId"]` becomes the text `request.services[0].serviceId`.
 
 ## 6. `packages/core/src/quotes/quote-request-schema.ts`
 
@@ -60,13 +60,35 @@ One job: look up what the client picked in the owner's settings.
 
 ## 8. `packages/core/src/quotes/create-quote.ts`
 
-One job: the public function, `createQuote(settings, request)`. It runs three steps.
+One job: the public function, `createQuote({ settings, request })`. It takes one input object and runs three steps.
 
-1. Check the shape of the request (file 6).
+1. Check the shape of the whole input: the settings and the request together.
 2. Look up the picked items in the settings (file 7).
 3. Make one line item for each service and each add-on, then add the amounts to get the total.
 
 An add-on line costs its price times its quantity. Example: a hybrid full set (US$120) with a lash bath (US$10) gives two line items and a total of `13000`, which is US$130.
+
+## 9. `packages/core/src/operations.ts`
+
+One job: the list of everything the engine can do. Each entry has a name such as `quote.create`, a one-line summary, the shape of its input, and the function to run.
+
+`runOperation(name, input)` finds an entry by its name and runs it. A tool that only has JSON, such as a scenario file or an AI agent, calls the engine this way.
+
+## 10. `packages/core/src/index.ts`
+
+One job: the public API. Code outside the engine imports from here only. `index.test.ts` fails when the list of exports changes, so the public API never changes by accident.
+
+## 11. `scenarios/`
+
+Real cases as data files. This folder is its own small package, because it reads files from disk and the engine must not.
+
+- `businesses/lash-studio.json`: the settings of a demo business.
+- `lash/*.json`: one file per case. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
+- `scenario-schema.ts`: the shape of a scenario file.
+- `load-scenarios.ts`: reads every file and attaches the settings of its business.
+- `run-scenarios.test.ts`: one test that runs every scenario through `runOperation`. The expected answer only has to list the parts that matter; extra fields in the real answer are fine.
+
+To add a case, add one JSON file. No code changes.
 
 ## The tests
 

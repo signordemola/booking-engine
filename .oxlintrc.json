@@ -11,8 +11,90 @@
     "typescript/no-floating-promises": "error",
     "typescript/no-deprecated": "error",
     "typescript/no-explicit-any": "error",
-    "unicorn/filename-case": ["error", { "case": "kebabCase" }],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
     "eslint/func-style": ["error", "expression"],
     "import/no-cycle": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["packages/core/src/lib/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/money/**",
+                  "**/settings/**",
+                  "**/quotes/**",
+                  "**/operations.js",
+                  "**/index.js"
+                ],
+                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/money/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/settings/**",
+                  "**/quotes/**",
+                  "**/operations.js",
+                  "**/index.js"
+                ],
+                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/settings/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/quotes/**", "**/operations.js", "**/index.js"],
+                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/quotes/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/operations.js", "**/index.js"],
+                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }
