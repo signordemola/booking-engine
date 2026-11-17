@@ -102,6 +102,15 @@ test.each([
     },
   },
   {
+    day: "the last day of a closure",
+    date: "2026-12-26",
+    reason: {
+      code: "slot.closed",
+      path: "request.date",
+      message: "The business is closed on this date: Christmas.",
+    },
+  },
+  {
     day: "a date that has passed",
     date: "2026-11-16",
     reason: {
@@ -124,6 +133,20 @@ test.each([
 
   expect(list.slots).toEqual([]);
   expect(list.reasons).toEqual([reason]);
+});
+
+test("the days just before and just after a closure are open", () => {
+  const dayBefore = listFor(hireStudio, noBusyTimes, {
+    date: "2026-12-24",
+    ...hire(2),
+  });
+  const dayAfter = listFor(hireStudio, noBusyTimes, {
+    date: "2026-12-27",
+    ...hire(2),
+  });
+
+  expect(dayBefore.slots.length).toBe(13);
+  expect(dayAfter.slots.length).toBe(13);
 });
 
 test("the last day inside the booking window still has start times", () => {
