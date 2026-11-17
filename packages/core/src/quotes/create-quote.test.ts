@@ -3,132 +3,13 @@ import type {
   BusinessSettings,
   DepositRule,
 } from "../settings/settings-schema.js";
+import {
+  hireStudio,
+  lashStudio,
+  photographer,
+  salon,
+} from "../testing/demo-businesses.js";
 import { createQuote } from "./create-quote.js";
-
-const lashStudio: BusinessSettings = {
-  version: 1,
-  businessId: "lash-by-nadia",
-  currency: "USD",
-  tax: { kind: "none" },
-  defaultDeposit: { kind: "none" },
-  services: [
-    {
-      id: "hybrid-full-set",
-      name: "Hybrid full set",
-      price: { kind: "fixed", amountMinor: 12000 },
-      deposit: { kind: "percentage", percent: 25 },
-      addOnIds: ["lash-bath", "aftercare-kit"],
-    },
-    {
-      id: "lash-removal",
-      name: "Lash removal",
-      price: { kind: "fixed", amountMinor: 2500 },
-      addOnIds: [],
-    },
-  ],
-  addOns: [
-    { id: "lash-bath", name: "Lash bath", priceMinor: 1000, maxQuantity: 1 },
-    {
-      id: "aftercare-kit",
-      name: "Aftercare kit",
-      priceMinor: 1800,
-      maxQuantity: 3,
-    },
-  ],
-  fees: [
-    { id: "home-visit", name: "Home visit", amountMinor: 2000, due: "today" },
-    {
-      id: "after-hours",
-      name: "After-hours appointment",
-      amountMinor: 1500,
-      due: "later",
-    },
-  ],
-};
-
-const salon: BusinessSettings = {
-  version: 1,
-  businessId: "atelier-rosa",
-  currency: "CAD",
-  tax: {
-    kind: "added",
-    rates: [
-      { id: "gst", name: "GST", percent: 5 },
-      { id: "qst", name: "QST", percent: 9.975 },
-    ],
-    timing: "with-each-payment",
-  },
-  defaultDeposit: { kind: "percentage", percent: 25 },
-  services: [
-    {
-      id: "balayage",
-      name: "Balayage",
-      price: { kind: "fixed", amountMinor: 24000 },
-      addOnIds: ["bond-treatment"],
-    },
-  ],
-  addOns: [
-    {
-      id: "bond-treatment",
-      name: "Bond treatment",
-      priceMinor: 3500,
-      maxQuantity: 1,
-    },
-  ],
-  fees: [],
-};
-
-const hireStudio: BusinessSettings = {
-  version: 1,
-  businessId: "northlight-studio",
-  currency: "CAD",
-  tax: {
-    kind: "added",
-    rates: [{ id: "hst", name: "HST", percent: 13 }],
-    timing: "with-balance",
-  },
-  defaultDeposit: { kind: "percentage", percent: 50 },
-  services: [
-    {
-      id: "daylight-studio",
-      name: "Daylight studio",
-      price: { kind: "hourly", hourlyMinor: 8500, minHours: 2, maxHours: 8 },
-      addOnIds: ["backdrop"],
-    },
-  ],
-  addOns: [
-    {
-      id: "backdrop",
-      name: "Paper backdrop",
-      priceMinor: 2500,
-      maxQuantity: 2,
-    },
-  ],
-  fees: [],
-};
-
-const photographer: BusinessSettings = {
-  version: 1,
-  businessId: "clara-monet-photography",
-  currency: "GBP",
-  tax: {
-    kind: "included",
-    rates: [{ id: "vat", name: "VAT", percent: 20 }],
-    timing: "with-each-payment",
-  },
-  defaultDeposit: { kind: "none" },
-  services: [
-    {
-      id: "portrait-session",
-      name: "Portrait session",
-      price: { kind: "fixed", amountMinor: 25000 },
-      deposit: { kind: "fixed", amountMinor: 7500 },
-      addOnIds: [],
-    },
-  ],
-  addOns: [],
-  fees: [{ id: "travel", name: "Travel", amountMinor: 2000, due: "today" }],
-};
 
 const fullSetWithLashBath = {
   services: [

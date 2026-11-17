@@ -1,3 +1,4 @@
+import { minutesOfDay, weekdays } from "../time/time.js";
 import type { BusinessSettings, Service } from "./settings-schema.js";
 
 export type SettingsProblem = {
@@ -103,6 +104,84 @@ const findFixedDepositsAbovePrice = (
   return problems;
 };
 
+const findWrongOpenWindows = (
+  settings: BusinessSettings,
+): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+
+  settings.resources.forEach((resource, resourceIndex) => {
+    weekdays.forEach((weekday) => {
+      const windows = resource.hours[weekday];
+
+      windows.forEach((window, windowIndex) => {
+        const path = [
+          "resources",
+          resourceIndex,
+          "hours",
+          weekday,
+          windowIndex,
+        ];
+        const previous = windows[windowIndex - 1];
+
+        if (minutesOfDay(window.start) >= minutesOfDay(window.end)) {
+          problems.push({
+            code: "settings.window-ends-before-start",
+            path,
+            message: `On ${weekday}, "${resource.name}" has hours that end before they start.`,
+          });
+        }
+        if (
+          previous &&
+          minutesOfDay(window.start) < minutesOfDay(previous.end)
+        ) {
+          problems.push({
+            code: "settings.windows-overlap",
+            path,
+            message: `On ${weekday}, "${resource.name}" has hours that overlap or are out of order.`,
+          });
+        }
+      });
+    });
+  });
+
+  return problems;
+};
+
+const findMissingServices = (settings: BusinessSettings): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+  const knownServiceIds = settings.services.map((service) => service.id);
+
+  settings.resources.forEach((resource, resourceIndex) => {
+    resource.serviceIds.forEach((serviceId, serviceIndex) => {
+      if (!knownServiceIds.includes(serviceId)) {
+        problems.push({
+          code: "settings.missing-service",
+          path: ["resources", resourceIndex, "serviceIds", serviceIndex],
+          message: `"${resource.name}" lists the service "${serviceId}", which does not exist.`,
+        });
+      }
+    });
+  });
+
+  return problems;
+};
+
+const findWrongClosures = (settings: BusinessSettings): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+
+  settings.closures.forEach((closure, index) => {
+    if (closure.from > closure.to) {
+      problems.push({
+        code: "settings.closure-ends-before-start",
+        path: ["closures", index],
+        message: `The closure "${closure.reason}" ends before it starts.`,
+      });
+    }
+  });
+
+  return problems;
+};
+
 export const findSettingsProblems = (
   settings: BusinessSettings,
 ): SettingsProblem[] => [
@@ -116,4 +195,8 @@ export const findSettingsProblems = (
   ...findMissingAddOns(settings),
   ...findWrongHourRanges(settings),
   ...findFixedDepositsAbovePrice(settings),
+  ...findRepeatedIds(["resources"], settings.resources),
+  ...findWrongOpenWindows(settings),
+  ...findMissingServices(settings),
+  ...findWrongClosures(settings),
 ];

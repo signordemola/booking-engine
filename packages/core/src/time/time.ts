@@ -80,3 +80,11 @@ export const localTimeToEpochMs = (
 
   return existsOnTheClock ? zoned.epochMilliseconds : null;
 };
+
+export const isClockTime = (text: string): boolean =>
+  /^([01]\d|2[0-3]):[0-5]\d$/.test(text);
+
+export const minutesOfDay = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return (hours ?? 0) * 60 + (minutes ?? 0);
+};
