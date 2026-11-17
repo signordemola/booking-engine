@@ -31,12 +31,14 @@
               {
                 "group": [
                   "**/money/**",
+                  "**/time/**",
                   "**/settings/**",
                   "**/quotes/**",
+                  "**/slots/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -52,12 +54,37 @@
             "patterns": [
               {
                 "group": [
+                  "**/time/**",
                   "**/settings/**",
                   "**/quotes/**",
+                  "**/slots/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/time/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/money/**",
+                  "**/settings/**",
+                  "**/quotes/**",
+                  "**/slots/**",
+                  "**/operations.js",
+                  "**/index.js"
+                ],
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -72,8 +99,13 @@
           {
             "patterns": [
               {
-                "group": ["**/quotes/**", "**/operations.js", "**/index.js"],
-                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+                "group": [
+                  "**/quotes/**",
+                  "**/slots/**",
+                  "**/operations.js",
+                  "**/index.js"
+                ],
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -88,10 +120,39 @@
           {
             "patterns": [
               {
-                "group": ["**/operations.js", "**/index.js"],
-                "message": "Imports go one way: lib, money, settings, then the feature modules. Move the shared piece down instead."
+                "group": ["**/slots/**", "**/operations.js", "**/index.js"],
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/slots/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/operations.js", "**/index.js"],
+                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/**"],
+      "excludeFiles": ["packages/core/src/time/**"],
+      "rules": {
+        "eslint/no-restricted-globals": [
+          "error",
+          {
+            "name": "Temporal",
+            "message": "Only the time module uses Temporal. Add a function to time/time.ts instead."
           }
         ]
       }
