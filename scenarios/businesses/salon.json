@@ -191,5 +191,23 @@
         "percent": 50
       }
     }
-  ]
+  ],
+  "policy": {
+    "cancellation": {
+      "kind": "notice",
+      "noticeHours": 24,
+      "lateCancelKeeps": {
+        "kind": "percentage",
+        "percent": 50
+      }
+    },
+    "noShowKeeps": {
+      "kind": "percentage",
+      "percent": 100
+    },
+    "reschedule": {
+      "noticeHours": 24,
+      "maxMoves": 2
+    }
+  }
 }

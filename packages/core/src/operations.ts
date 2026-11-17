@@ -3,8 +3,12 @@ import { applyBookingAction } from "./bookings/apply-booking-action.js";
 import {
   applyBookingActionInputSchema,
   decideBookingInputSchema,
+  decideCancellationInputSchema,
+  decideRescheduleInputSchema,
 } from "./bookings/booking-schema.js";
 import { decideBooking } from "./bookings/decide-booking.js";
+import { decideCancellation } from "./bookings/decide-cancellation.js";
+import { decideReschedule } from "./bookings/decide-reschedule.js";
 import type { Result } from "./lib/result.js";
 import { createQuote, createQuoteInputSchema } from "./quotes/create-quote.js";
 import { parseSettings, settingsSchema } from "./settings/parse-settings.js";
@@ -64,6 +68,20 @@ export const operations: Operation[] = [
       "Apply one action to a booking: deposit paid, hold run out, cancel, complete or no-show.",
     inputSchema: applyBookingActionInputSchema,
     run: applyBookingAction,
+  },
+  {
+    name: "booking.cancel",
+    summary:
+      "End a booking by a client cancel, a business cancel or a no-show: what is kept, refunded or charged, and the tax inside the kept amount.",
+    inputSchema: decideCancellationInputSchema,
+    run: decideCancellation,
+  },
+  {
+    name: "booking.reschedule",
+    summary:
+      "Move a confirmed booking to a new start time, if the policy and the new time allow it.",
+    inputSchema: decideRescheduleInputSchema,
+    run: decideReschedule,
   },
 ];
 

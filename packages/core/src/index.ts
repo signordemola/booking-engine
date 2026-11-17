@@ -10,11 +10,21 @@ export {
   type BookingEvent,
   type BookingRequest,
   type BookingStatus,
+  type CancellationKind,
 } from "./bookings/booking-schema.js";
 export {
   decideBooking,
   type BookingDecision,
 } from "./bookings/decide-booking.js";
+export {
+  decideCancellation,
+  type Cancellation,
+  type CancellationMoney,
+} from "./bookings/decide-cancellation.js";
+export {
+  decideReschedule,
+  type Reschedule,
+} from "./bookings/decide-reschedule.js";
 export type { Problem, Reason, Result } from "./lib/result.js";
 export { operations, runOperation, type Operation } from "./operations.js";
 export type { TaxLine } from "./quotes/calculate-tax.js";
@@ -43,7 +53,9 @@ export type {
   Fee,
   Level,
   Gaps,
+  KeepRule,
   OpenWindow,
+  Policy,
   Price,
   Resource,
   Rule,

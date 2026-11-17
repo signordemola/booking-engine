@@ -18,8 +18,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Done        |
 | 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Done        |
 | 5     | Rules          | Only times at least 48 hours after the patch test                                 | Done        |
-| 6     | Policies       | "Non-refundable. Moves once."                                                     | Next        |
-| 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Not started |
+| 6     | Policies       | "Non-refundable. Moves once."                                                     | Done        |
+| 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Next        |
 | 8     | First products | An AI assistant books a lash appointment and obeys the patch test rule            | Not started |
 
 Already built before this plan: exact percentages, the settings check, and quote totals.
@@ -68,7 +68,7 @@ Done: the studio hire case, both clock-change days and the two-stylist cases run
 
 Done: the photographer case runs as scenarios, and 20 requests at the same moment give exactly one booking.
 
-Not built here: money rules for a cancellation (stage 6), and the Postgres store (after stage 8, when a client build needs it).
+Not built here: money rules for a cancellation (built in stage 6), and the Postgres store (after stage 8, when a client build needs it).
 
 ### Stage 5: Rules
 
@@ -91,8 +91,12 @@ Not built here: the photographer promises that are not rules of this kind (a new
 - Cancellation: a notice period, and how much of the deposit is kept.
 - Refund amounts, with the tax inside a kept deposit.
 - Reschedule: a notice period and a limit on moves.
+- Each booking keeps a copy of the policy it was made with.
+- The store moves a booking with the same no-overlap promise as a new booking.
 
-Done when: "Non-refundable. Moves once." runs as a scenario, with a second move refused.
+Done: "Non-refundable. Moves once." runs as scenarios: the US$30 deposit is kept, the first move is accepted and a second move is refused. A late photo cancel, a late salon cancel with two taxes and a late studio hire cancel run too.
+
+Not built here: a policy for each service, a fee for a move, a move to another staff member, and a copy of the tax rates on the booking.
 
 ### Stage 7: Follow-ups
 

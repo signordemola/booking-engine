@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { requestedServicesSchema } from "../quotes/quote-request-schema.js";
 import { settingsSchema } from "../settings/parse-settings.js";
+import { policySchema } from "../settings/settings-schema.js";
 import { slotFactsSchema } from "../slots/slot-input-schema.js";
 import { isInstantText, toEpochMs } from "../time/time.js";
 
@@ -51,6 +52,9 @@ export const bookingSchema = z.strictObject({
   currency: z.string().regex(/^[A-Z]{3}$/),
   totalMinor: amountMinorSchema,
   dueTodayMinor: amountMinorSchema,
+  services: requestedServicesSchema,
+  moveCount: z.int().nonnegative(),
+  policy: policySchema,
 });
 
 export const decideBookingInputSchema = z.strictObject({
@@ -75,10 +79,36 @@ export const applyBookingActionInputSchema = z.strictObject({
   }),
 });
 
+const cancellationKindMessage =
+  "Choose who ends the booking: client-cancel, business-cancel or no-show.";
+
+export const decideCancellationInputSchema = z.strictObject({
+  settings: settingsSchema,
+  facts: z.strictObject({ now: instantSchema, paidMinor: amountMinorSchema }),
+  request: z.strictObject({
+    booking: bookingSchema,
+    kind: z.enum(["client-cancel", "business-cancel", "no-show"], {
+      error: cancellationKindMessage,
+    }),
+  }),
+});
+
+export const decideRescheduleInputSchema = z.strictObject({
+  settings: settingsSchema,
+  facts: slotFactsSchema,
+  request: z.strictObject({
+    booking: bookingSchema,
+    start: instantSchema,
+  }),
+});
+
 export type Booking = z.infer<typeof bookingSchema>;
 export type BookingRequest = z.input<
   typeof decideBookingInputSchema
 >["request"];
+export type CancellationKind = z.infer<
+  typeof decideCancellationInputSchema
+>["request"]["kind"];
 export type BookingStatus = (typeof bookingStatuses)[number];
 export type BookingAction = (typeof bookingActions)[number];
 
@@ -89,7 +119,8 @@ export type BookingEvent = {
     | "booking.expired"
     | "booking.cancelled"
     | "booking.completed"
-    | "booking.no-show";
+    | "booking.no-show"
+    | "booking.moved";
   businessId: string;
   bookingId: string;
   at: string;

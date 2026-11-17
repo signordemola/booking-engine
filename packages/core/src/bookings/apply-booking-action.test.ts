@@ -23,6 +23,9 @@ const heldBooking: Booking = {
   currency: "GBP",
   totalMinor: 25000,
   dueTodayMinor: 7500,
+  services: [{ serviceId: "portrait-session", addOns: [] }],
+  moveCount: 0,
+  policy: photographer.policy,
 };
 
 const withStatus = (status: BookingStatus): Booking => ({

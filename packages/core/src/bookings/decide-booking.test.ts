@@ -36,6 +36,9 @@ test("a portrait session with a retainer is held, not confirmed, until the retai
         currency: "GBP",
         totalMinor: 25000,
         dueTodayMinor: 7500,
+        services: [{ serviceId: "portrait-session", addOns: [] }],
+        moveCount: 0,
+        policy: photographer.policy,
       },
       quote: {
         totalMinor: 25000,

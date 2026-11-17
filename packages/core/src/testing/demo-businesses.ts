@@ -212,6 +212,11 @@ export const lashStudio: BusinessSettings = {
       serviceIds: ["patch-test", "brow-consultation"],
     },
   ],
+  policy: {
+    cancellation: { kind: "non-refundable" },
+    noShowKeeps: { kind: "paid" },
+    reschedule: { noticeHours: 48, maxMoves: 1 },
+  },
 };
 
 export const salon: BusinessSettings = {
@@ -408,6 +413,15 @@ export const salon: BusinessSettings = {
       },
     },
   ],
+  policy: {
+    cancellation: {
+      kind: "notice",
+      noticeHours: 24,
+      lateCancelKeeps: { kind: "percentage", percent: 50 },
+    },
+    noShowKeeps: { kind: "percentage", percent: 100 },
+    reschedule: { noticeHours: 24, maxMoves: 2 },
+  },
 };
 
 export const hireStudio: BusinessSettings = {
@@ -538,6 +552,15 @@ export const hireStudio: BusinessSettings = {
       formVersion: "2026-03",
     },
   ],
+  policy: {
+    cancellation: {
+      kind: "notice",
+      noticeHours: 72,
+      lateCancelKeeps: { kind: "paid" },
+    },
+    noShowKeeps: { kind: "paid" },
+    reschedule: { noticeHours: 72, maxMoves: 1 },
+  },
 };
 
 export const photographer: BusinessSettings = {
@@ -643,4 +666,13 @@ export const photographer: BusinessSettings = {
   ],
   closures: [],
   rules: [],
+  policy: {
+    cancellation: {
+      kind: "notice",
+      noticeHours: 336,
+      lateCancelKeeps: { kind: "percentage", percent: 50 },
+    },
+    noShowKeeps: { kind: "percentage", percent: 100 },
+    reschedule: { noticeHours: 168, maxMoves: 1 },
+  },
 };

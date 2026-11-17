@@ -1,0 +1,75 @@
+{
+  "id": "late-cancel-keeps-the-deposit",
+  "title": "A hire cancelled less than 72 hours ahead keeps the CA$85 deposit, with HST inside",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "booking.cancel",
+  "facts": {
+    "now": "2026-11-19T15:00:00Z",
+    "paidMinor": 8500
+  },
+  "request": {
+    "booking": {
+      "businessId": "northlight-studio",
+      "bookingId": "booking-4001",
+      "clientId": "client-jonah",
+      "resourceId": "daylight-room",
+      "status": "confirmed",
+      "start": "2026-11-21T15:00:00Z",
+      "end": "2026-11-21T17:00:00Z",
+      "blockedStart": "2026-11-21T15:00:00Z",
+      "blockedEnd": "2026-11-21T17:30:00Z",
+      "holdExpiresAt": null,
+      "createdAt": "2026-11-17T15:00:00Z",
+      "currency": "CAD",
+      "totalMinor": 19210,
+      "dueTodayMinor": 8500,
+      "services": [
+        {
+          "serviceId": "daylight-studio",
+          "hours": 2,
+          "addOns": []
+        }
+      ],
+      "moveCount": 0,
+      "policy": {
+        "cancellation": {
+          "kind": "notice",
+          "noticeHours": 72,
+          "lateCancelKeeps": {
+            "kind": "paid"
+          }
+        },
+        "noShowKeeps": {
+          "kind": "paid"
+        },
+        "reschedule": {
+          "noticeHours": 72,
+          "maxMoves": 1
+        }
+      }
+    },
+    "kind": "client-cancel"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "money": {
+        "keptMinor": 8500,
+        "refundMinor": 0,
+        "chargeMinor": 0,
+        "taxInKept": [
+          {
+            "taxId": "hst",
+            "amountMinor": 978
+          }
+        ]
+      },
+      "reasons": [
+        {
+          "code": "cancellation.late"
+        }
+      ]
+    }
+  }
+}
