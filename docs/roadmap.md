@@ -13,8 +13,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | Stage | Name           | Real case that proves it                                                          | Status      |
 | ----- | -------------- | --------------------------------------------------------------------------------- | ----------- |
 | 0     | Repo setup     | Checks run on every push                                                          | Done        |
-| 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Next        |
-| 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Started     |
+| 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Done        |
+| 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Next        |
 | 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Not started |
 | 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Not started |
 | 5     | Rules          | Only times at least 48 hours after the patch test                                 | Not started |
@@ -26,13 +26,14 @@ Already built before this plan: exact percentages, the settings check, and quote
 
 ### Stage 1: Contracts
 
-- Scenario files: the format, four demo businesses (lash studio, salon, studio hire, photographer), and one test that runs every file.
-- The operation shape: settings, facts and request go in; an answer with reasons comes out. Errors get stable codes.
+- Scenario files: the format, the first demo business (a lash studio), and one test that runs every file. The other three demo businesses arrive with their first case.
+- The operation shape: each public function takes one input object, with the settings and the request. Facts join it in the stage that first needs them.
+- Every error has a stable code, a path and a plain message.
+- One list of operations, and a way to run one by its name.
 - The public API: one entry file, and a test that fails when the list of exports changes by accident.
 - The import order between modules, enforced by the linter.
-- The settings shape published as a JSON Schema file.
 
-Done when: the homepage quote runs from a JSON file, and all checks are green.
+Done: the homepage quote runs from `scenarios/lash/full-set-with-lash-bath.json`.
 
 ### Stage 2: Money
 
@@ -94,7 +95,7 @@ Done when: a scenario runs the same job twice and gets each message once.
 
 ### Stage 8: First products
 
-1. A guide for AI coding tools, and JSON Schema files for every operation. Both are generated from the operations list, so they cannot go out of date.
+1. A guide for AI coding tools, and JSON Schema files for the settings and for every operation. They are generated from the operations list, so they cannot go out of date.
 2. An AI agent tool server (MCP) over the operations, with a short demo.
 3. A page of scenarios in the docs, generated from the scenario files.
 
@@ -111,15 +112,15 @@ After that, the next product depends on the next real opportunity:
 
 1. Research first: competitor help pages, official rules, and how open-source projects write that kind of code.
 2. Scenarios and tests first, then code.
-3. One small pull request per step. All four checks green. `PROGRESS.md` updated in the same pull request.
+3. One pull request per stage, with one small commit per step. All four checks green. `PROGRESS.md` updated in the same pull request.
 4. The reading guide gets a section for each new module.
-5. A stage starts only after the one before it is approved.
+5. A stage starts only after the pull request of the stage before it is merged.
 
 ## Practice
 
-After each stage: a few challenges on that stage. Each challenge is a real case from a competitor's help page. The work is to write the owner's settings, work the answer by hand, write the scenario file, and extend the engine if it cannot do the case yet. Every finished challenge stays in the repo as a scenario.
+Practice starts when the foundation is set, after stage 7. Each challenge is a real case from a competitor's help page. The work is to write the owner's settings, work the answer by hand, write the scenario file, and extend the engine if it cannot do the case yet. Every finished challenge stays in the repo as a scenario.
 
-| Stage      | Interview topics it exercises                                                                                |
+| Stage      | Interview topics it covers                                                                                   |
 | ---------- | ------------------------------------------------------------------------------------------------------------ |
 | Contracts  | Generic types, JSON at the edge and types inside, compile time and runtime                                   |
 | Money      | Discriminated unions, exact arithmetic, rounding                                                             |

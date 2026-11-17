@@ -27,8 +27,8 @@ Code depends downward only. The core imports nothing from the layers above it.
 | Layer        | Where                    | Status   |
 | ------------ | ------------------------ | -------- |
 | Core         | `packages/core`          | Building |
-| Operations   | `packages/core`          | Designed |
-| Scenarios    | `scenarios/`             | Designed |
+| Operations   | `packages/core`          | Building |
+| Scenarios    | `scenarios/`             | Building |
 | Platform kit | `packages/store`         | Designed |
 | Products     | `packages/mcp`, `apps/*` | Designed |
 
@@ -72,11 +72,11 @@ A scenario is one JSON file: a business, some facts, a request and the expected 
 
 ```text
 scenarios/
-  businesses/     four demo businesses: lash studio, salon, studio hire, photographer
+  businesses/     the demo businesses: a lash studio first; a salon, a studio hire and a photographer later
   lash/           one file per real case
-  salon/
-  studio-hire/
-  photographer/
+  salon/          (later)
+  studio-hire/    (later)
+  photographer/   (later)
 ```
 
 One test runs every file against the engine. The same files can later feed a page of examples, the policy simulator, a benchmark for AI models, and practice exercises. Tests stored as data are a proven idea: the JSON Schema project tests every implementation of its standard this way.
