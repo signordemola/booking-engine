@@ -195,6 +195,12 @@ importers:
         specifier: 7.0.0
         version: 7.0.0
 
+  packages/store:
+    dependencies:
+      '@booking-engine/core':
+        specifier: workspace:*
+        version: link:../core
+
   scenarios:
     dependencies:
       '@booking-engine/core':

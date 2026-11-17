@@ -76,6 +76,9 @@ export const applyBookingActionInputSchema = z.strictObject({
 });
 
 export type Booking = z.infer<typeof bookingSchema>;
+export type BookingRequest = z.input<
+  typeof decideBookingInputSchema
+>["request"];
 export type BookingStatus = (typeof bookingStatuses)[number];
 export type BookingAction = (typeof bookingActions)[number];
 

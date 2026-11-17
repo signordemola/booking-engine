@@ -7,6 +7,7 @@ export {
   type Booking,
   type BookingAction,
   type BookingEvent,
+  type BookingRequest,
   type BookingStatus,
 } from "./bookings/booking-schema.js";
 export {
