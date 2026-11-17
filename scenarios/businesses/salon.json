@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "businessId": "atelier-rosa",
+  "currency": "CAD",
+  "tax": {
+    "kind": "added",
+    "rates": [
+      { "id": "gst", "name": "GST", "percent": 5 },
+      { "id": "qst", "name": "QST", "percent": 9.975 }
+    ],
+    "timing": "with-each-payment"
+  },
+  "defaultDeposit": { "kind": "percentage", "percent": 25 },
+  "services": [
+    {
+      "id": "balayage",
+      "name": "Balayage",
+      "price": { "kind": "fixed", "amountMinor": 24000 },
+      "addOnIds": ["bond-treatment"]
+    },
+    {
+      "id": "fringe-trim",
+      "name": "Fringe trim",
+      "price": { "kind": "fixed", "amountMinor": 1500 },
+      "deposit": { "kind": "none" },
+      "addOnIds": []
+    }
+  ],
+  "addOns": [
+    {
+      "id": "bond-treatment",
+      "name": "Bond treatment",
+      "priceMinor": 3500,
+      "maxQuantity": 1
+    }
+  ],
+  "fees": []
+}

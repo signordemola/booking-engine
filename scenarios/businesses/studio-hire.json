@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "businessId": "northlight-studio",
+  "currency": "CAD",
+  "tax": {
+    "kind": "added",
+    "rates": [{ "id": "hst", "name": "HST", "percent": 13 }],
+    "timing": "with-balance"
+  },
+  "defaultDeposit": { "kind": "percentage", "percent": 50 },
+  "services": [
+    {
+      "id": "daylight-studio",
+      "name": "Daylight studio",
+      "price": {
+        "kind": "hourly",
+        "hourlyMinor": 8500,
+        "minHours": 2,
+        "maxHours": 8
+      },
+      "addOnIds": ["backdrop", "lighting-kit"]
+    }
+  ],
+  "addOns": [
+    {
+      "id": "backdrop",
+      "name": "Paper backdrop",
+      "priceMinor": 2500,
+      "maxQuantity": 2
+    },
+    {
+      "id": "lighting-kit",
+      "name": "Lighting kit",
+      "priceMinor": 4000,
+      "maxQuantity": 1
+    }
+  ],
+  "fees": []
+}
