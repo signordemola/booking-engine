@@ -27,6 +27,7 @@ export const requestedServicesSchema = z
 export const quoteRequestSchema = z.strictObject({
   services: requestedServicesSchema,
   feeIds: z.array(idSchema).default([]),
+  resourceId: idSchema.optional(),
 });
 
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;

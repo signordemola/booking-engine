@@ -23,10 +23,23 @@ export type RequestedItems = { services: RequestedService[]; fees: Fee[] };
 
 type Price = { hours: number | null; priceMinor: number };
 
+const fixedAmountFor = (
+  service: Service,
+  levelId: string | undefined,
+): number => {
+  if (service.price.kind !== "fixed") return 0;
+
+  const levelPrice = (service.price.levelPrices ?? []).find(
+    (item) => item.levelId === levelId,
+  );
+  return levelPrice?.amountMinor ?? service.price.amountMinor;
+};
+
 const findPrice = (
   service: Service,
   requested: RequestedServiceInput,
   path: string,
+  levelId: string | undefined,
 ): Result<Price> => {
   const price = service.price;
   const hours = requested.hours;
@@ -44,7 +57,10 @@ const findPrice = (
         ],
       };
     }
-    return { ok: true, value: { hours: null, priceMinor: price.amountMinor } };
+    return {
+      ok: true,
+      value: { hours: null, priceMinor: fixedAmountFor(service, levelId) },
+    };
   }
 
   if (hours === undefined) {
@@ -169,6 +185,17 @@ export const findRequestedItems = (
 ): Result<RequestedItems> => {
   const problems: Problem[] = [];
   const services: RequestedService[] = [];
+  const resource = settings.resources.find(
+    (item) => item.id === request.resourceId,
+  );
+
+  if (request.resourceId !== undefined && !resource) {
+    problems.push({
+      code: "quote.unknown-resource",
+      path: "request.resourceId",
+      message: `The resource "${request.resourceId}" does not exist.`,
+    });
+  }
 
   request.services.forEach((requested, serviceIndex) => {
     const path = `request.services[${serviceIndex}]`;
@@ -185,7 +212,7 @@ export const findRequestedItems = (
       return;
     }
 
-    const price = findPrice(service, requested, path);
+    const price = findPrice(service, requested, path, resource?.levelId);
     const addOns = findAddOns(settings, service, requested, path);
 
     if (!price.ok) problems.push(...price.errors);

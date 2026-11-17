@@ -26,6 +26,7 @@ export type {
   ServiceLineItem,
 } from "./quotes/quote-line-items.js";
 export type { QuoteRequest } from "./quotes/quote-request-schema.js";
+export type { ClientFacts } from "./rules/client-facts-schema.js";
 export { parseSettings } from "./settings/parse-settings.js";
 export { checkSlot, type SlotCheck } from "./slots/check-slot.js";
 export { listSlots, type Slot, type SlotList } from "./slots/list-slots.js";
@@ -40,10 +41,12 @@ export type {
   DepositRule,
   Closure,
   Fee,
+  Level,
   Gaps,
   OpenWindow,
   Price,
   Resource,
+  Rule,
   Service,
   TaxRate,
   TaxSettings,

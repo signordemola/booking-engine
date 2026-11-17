@@ -1,10 +1,14 @@
 import type { Booking } from "@booking-engine/core";
-import { hireStudio, photographer } from "@booking-engine/core/testing";
+import {
+  hireStudio as hireStudioWithRules,
+  photographer,
+} from "@booking-engine/core/testing";
 import { expect, test } from "vitest";
 import { bookSlot } from "./book-slot.js";
 import { InMemoryBookingStore } from "./in-memory-booking-store.js";
 
 const tuesday = "2026-11-17T15:00:00Z";
+const hireStudio = { ...hireStudioWithRules, rules: [] };
 
 const hireRequest = (number: number, start: string, hours: number) => ({
   bookingId: `booking-${number}`,

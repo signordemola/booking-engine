@@ -33,13 +33,14 @@
                   "**/money/**",
                   "**/time/**",
                   "**/settings/**",
+                  "**/rules/**",
                   "**/quotes/**",
                   "**/slots/**",
                   "**/bookings/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -57,13 +58,14 @@
                 "group": [
                   "**/time/**",
                   "**/settings/**",
+                  "**/rules/**",
                   "**/quotes/**",
                   "**/slots/**",
                   "**/bookings/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -79,15 +81,16 @@
             "patterns": [
               {
                 "group": [
-                  "**/money/**",
                   "**/settings/**",
+                  "**/rules/**",
                   "**/quotes/**",
                   "**/slots/**",
                   "**/bookings/**",
+                  "**/money/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -103,13 +106,36 @@
             "patterns": [
               {
                 "group": [
+                  "**/rules/**",
                   "**/quotes/**",
                   "**/slots/**",
                   "**/bookings/**",
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/core/src/rules/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "**/quotes/**",
+                  "**/slots/**",
+                  "**/bookings/**",
+                  "**/operations.js",
+                  "**/index.js"
+                ],
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -130,7 +156,7 @@
                   "**/operations.js",
                   "**/index.js"
                 ],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -146,7 +172,7 @@
             "patterns": [
               {
                 "group": ["**/bookings/**", "**/operations.js", "**/index.js"],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
@@ -162,7 +188,7 @@
             "patterns": [
               {
                 "group": ["**/operations.js", "**/index.js"],
-                "message": "Imports go one way: lib, money and time, then settings, then the feature modules. Move the shared piece down instead."
+                "message": "Imports go one way: lib, money and time, then settings, then rules, then the feature modules. Move the shared piece down instead."
               }
             ]
           }
