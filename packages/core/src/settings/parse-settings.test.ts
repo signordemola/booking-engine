@@ -1,46 +1,33 @@
 import { expect, test } from "vitest";
+import {
+  hireStudio,
+  lashStudio,
+  photographer,
+  salon,
+} from "../testing/demo-businesses.js";
 import { parseSettings } from "./parse-settings.js";
 
-const lashByNadia = {
-  version: 1,
-  businessId: "lash-by-nadia",
-  currency: "USD",
-  tax: { kind: "none" },
-  defaultDeposit: { kind: "none" },
-  services: [
-    {
-      id: "hybrid-full-set",
-      name: "Hybrid full set",
-      price: { kind: "fixed", amountMinor: 12000 },
-      deposit: { kind: "percentage", percent: 25 },
-      addOnIds: ["lash-bath"],
-    },
-    {
-      id: "lash-removal",
-      name: "Lash removal",
-      price: { kind: "fixed", amountMinor: 2500 },
-      addOnIds: [],
-    },
-  ],
-  addOns: [
-    { id: "lash-bath", name: "Lash bath", priceMinor: 1000, maxQuantity: 1 },
-  ],
-  fees: [
-    { id: "home-visit", name: "Home visit", amountMinor: 2000, due: "today" },
-  ],
-};
+const lashByNadia = { ...lashStudio, resources: [] };
+const nadia = lashStudio.resources[0];
 
 const hybridFullSet = lashByNadia.services[0];
 const lashRemoval = lashByNadia.services[1];
 const lashBath = lashByNadia.addOns[0];
+const homeVisit = lashByNadia.fees[0];
+const aftercareKit = lashByNadia.addOns[1];
 
 const errorsFor = (input: unknown) => {
   const result = parseSettings(input);
   return result.ok ? [] : result.errors;
 };
 
-test("accepts the settings of a lash studio", () => {
-  expect(parseSettings(lashByNadia)).toEqual({ ok: true, value: lashByNadia });
+test.each([
+  { business: "the lash studio", settings: lashStudio },
+  { business: "the salon", settings: salon },
+  { business: "the studio hire", settings: hireStudio },
+  { business: "the photographer", settings: photographer },
+])("accepts the settings of $business", ({ settings }) => {
+  expect(parseSettings(settings)).toEqual({ ok: true, value: settings });
 });
 
 test.each([
@@ -71,6 +58,19 @@ test.each([
   expect(parseSettings({ ...lashByNadia, tax }).ok).toBe(true);
 });
 
+test("accepts hours that run until midnight", () => {
+  const input = {
+    ...lashByNadia,
+    resources: [
+      {
+        ...nadia,
+        hours: { ...nadia?.hours, friday: [{ start: "18:00", end: "24:00" }] },
+      },
+    ],
+  };
+  expect(parseSettings(input).ok).toBe(true);
+});
+
 test("accepts a service priced by the hour", () => {
   const input = {
     ...lashByNadia,
@@ -87,7 +87,12 @@ test("accepts a service priced by the hour", () => {
 test("accepts a free service", () => {
   const input = {
     ...lashByNadia,
-    services: [{ ...lashRemoval, price: { kind: "fixed", amountMinor: 0 } }],
+    services: [
+      {
+        ...lashRemoval,
+        price: { kind: "fixed", amountMinor: 0, durationMinutes: 30 },
+      },
+    ],
   };
   expect(parseSettings(input).ok).toBe(true);
 });
@@ -113,7 +118,10 @@ test.each([
     input: {
       ...lashByNadia,
       services: [
-        { ...hybridFullSet, price: { kind: "fixed", amountMinor: 120.5 } },
+        {
+          ...hybridFullSet,
+          price: { kind: "fixed", amountMinor: 120.5, durationMinutes: 30 },
+        },
       ],
     },
     path: "services[0].price.amountMinor",
@@ -123,7 +131,10 @@ test.each([
   {
     problem: "a negative price",
     code: "input.invalid",
-    input: { ...lashByNadia, addOns: [{ ...lashBath, priceMinor: -1000 }] },
+    input: {
+      ...lashByNadia,
+      addOns: [{ ...lashBath, priceMinor: -1000 }, aftercareKit],
+    },
     path: "addOns[0].priceMinor",
     message:
       "Enter the amount as a whole number of minor units, for example 12000 for 120.00.",
@@ -167,7 +178,10 @@ test.each([
   {
     problem: "an add-on that can never be picked",
     code: "input.invalid",
-    input: { ...lashByNadia, addOns: [{ ...lashBath, maxQuantity: 0 }] },
+    input: {
+      ...lashByNadia,
+      addOns: [{ ...lashBath, maxQuantity: 0 }, aftercareKit],
+    },
     path: "addOns[0].maxQuantity",
     message: "Enter a whole number, 1 or more.",
   },
@@ -229,7 +243,7 @@ test.each([
     code: "settings.repeated-id",
     input: {
       ...lashByNadia,
-      addOns: [lashBath, { ...lashBath, name: "Lash shampoo" }],
+      addOns: [lashBath, { ...lashBath, name: "Lash shampoo" }, aftercareKit],
     },
     path: "addOns[1].id",
     message:
@@ -311,7 +325,7 @@ test.each([
   {
     problem: "two fees with the same id",
     code: "settings.repeated-id",
-    input: { ...lashByNadia, fees: [...lashByNadia.fees, ...lashByNadia.fees] },
+    input: { ...lashByNadia, fees: [homeVisit, homeVisit] },
     path: "fees[1].id",
     message:
       'The id "home-visit" is used more than once. Each id must be different.',
@@ -364,6 +378,118 @@ test.each([
     path: "tax.rates[1].id",
     message: 'The id "gst" is used more than once. Each id must be different.',
   },
+  {
+    problem: "a time zone that does not exist",
+    code: "input.invalid",
+    input: { ...lashByNadia, timeZone: "Eastern" },
+    path: "timeZone",
+    message: "Use a time zone name such as Europe/London or America/Toronto.",
+  },
+  {
+    problem: "opening hours in a 12-hour format",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      resources: [
+        {
+          ...nadia,
+          hours: { ...nadia?.hours, monday: [{ start: "9am", end: "17:00" }] },
+        },
+      ],
+    },
+    path: "resources[0].hours.monday[0].start",
+    message: "Use a 24-hour time such as 09:00 or 17:30.",
+  },
+  {
+    problem: "opening hours that end before they start",
+    code: "settings.window-ends-before-start",
+    input: {
+      ...lashByNadia,
+      resources: [
+        {
+          ...nadia,
+          hours: {
+            ...nadia?.hours,
+            monday: [{ start: "18:00", end: "10:00" }],
+          },
+        },
+      ],
+    },
+    path: "resources[0].hours.monday[0]",
+    message: 'On monday, "Nadia" has hours that end before they start.',
+  },
+  {
+    problem: "opening hours that overlap",
+    code: "settings.windows-overlap",
+    input: {
+      ...lashByNadia,
+      resources: [
+        {
+          ...nadia,
+          hours: {
+            ...nadia?.hours,
+            monday: [
+              { start: "09:00", end: "13:00" },
+              { start: "12:00", end: "17:00" },
+            ],
+          },
+        },
+      ],
+    },
+    path: "resources[0].hours.monday[1]",
+    message: 'On monday, "Nadia" has hours that overlap or are out of order.',
+  },
+  {
+    problem: "a resource that lists a service that does not exist",
+    code: "settings.missing-service",
+    input: {
+      ...lashByNadia,
+      resources: [{ ...nadia, serviceIds: ["brow-tint"] }],
+    },
+    path: "resources[0].serviceIds[0]",
+    message: '"Nadia" lists the service "brow-tint", which does not exist.',
+  },
+  {
+    problem: "two resources with the same id",
+    code: "settings.repeated-id",
+    input: { ...lashByNadia, resources: [nadia, nadia] },
+    path: "resources[1].id",
+    message:
+      'The id "nadia" is used more than once. Each id must be different.',
+  },
+  {
+    problem: "a closure on a date that does not exist",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      closures: [{ from: "2027-02-29", to: "2027-03-01", reason: "Holiday" }],
+    },
+    path: "closures[0].from",
+    message: "Use a date such as 2026-12-25.",
+  },
+  {
+    problem: "a closure that ends before it starts",
+    code: "settings.closure-ends-before-start",
+    input: {
+      ...lashByNadia,
+      closures: [{ from: "2026-12-26", to: "2026-12-25", reason: "Christmas" }],
+    },
+    path: "closures[0]",
+    message: 'The closure "Christmas" ends before it starts.',
+  },
+  {
+    problem: "a negative gap between bookings",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      schedule: {
+        ...lashByNadia.schedule,
+        gaps: { beforeMinutes: 0, afterMinutes: -15 },
+      },
+    },
+    path: "schedule.gaps.afterMinutes",
+    message: "Enter a whole number of minutes, 0 or more.",
+  },
 ])("rejects $problem", ({ input, code, path, message }) => {
   expect(errorsFor(input)).toEqual([{ code, path, message }]);
 });
@@ -376,7 +502,7 @@ test("reports every problem at once, so the owner can fix them in one pass", () 
       {
         ...hybridFullSet,
         name: "",
-        price: { kind: "fixed", amountMinor: 120.5 },
+        price: { kind: "fixed", amountMinor: 120.5, durationMinutes: 30 },
       },
     ],
   };

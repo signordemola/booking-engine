@@ -1,23 +1,6 @@
 import { expect, test } from "vitest";
 import { operations, runOperation } from "./operations.js";
-
-const lashStudio = {
-  version: 1,
-  businessId: "lash-by-nadia",
-  currency: "USD",
-  tax: { kind: "none" },
-  defaultDeposit: { kind: "none" },
-  services: [
-    {
-      id: "lash-removal",
-      name: "Lash removal",
-      price: { kind: "fixed", amountMinor: 2500 },
-      addOnIds: [],
-    },
-  ],
-  addOns: [],
-  fees: [],
-};
+import { lashStudio } from "./testing/demo-businesses.js";
 
 test("every operation has a different name and a summary", () => {
   const names = operations.map((operation) => operation.name);

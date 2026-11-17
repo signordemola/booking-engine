@@ -2,23 +2,100 @@
   "version": 1,
   "businessId": "clara-monet-photography",
   "currency": "GBP",
+  "timeZone": "Europe/London",
   "tax": {
     "kind": "included",
-    "rates": [{ "id": "vat", "name": "VAT", "percent": 20 }],
+    "rates": [
+      {
+        "id": "vat",
+        "name": "VAT",
+        "percent": 20
+      }
+    ],
     "timing": "with-each-payment"
   },
-  "defaultDeposit": { "kind": "none" },
+  "defaultDeposit": {
+    "kind": "none"
+  },
   "services": [
     {
       "id": "portrait-session",
       "name": "Portrait session",
-      "price": { "kind": "fixed", "amountMinor": 25000 },
-      "deposit": { "kind": "fixed", "amountMinor": 7500 },
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 25000,
+        "durationMinutes": 90
+      },
+      "deposit": {
+        "kind": "fixed",
+        "amountMinor": 7500
+      },
       "addOnIds": []
     }
   ],
   "addOns": [],
   "fees": [
-    { "id": "travel", "name": "Travel", "amountMinor": 2000, "due": "today" }
-  ]
+    {
+      "id": "travel",
+      "name": "Travel",
+      "amountMinor": 2000,
+      "due": "today"
+    }
+  ],
+  "schedule": {
+    "slotStepMinutes": 30,
+    "minNoticeMinutes": 2880,
+    "maxAdvanceDays": 365,
+    "gaps": {
+      "beforeMinutes": 30,
+      "afterMinutes": 30
+    }
+  },
+  "resources": [
+    {
+      "id": "clara",
+      "name": "Clara",
+      "serviceIds": ["portrait-session"],
+      "hours": {
+        "monday": [
+          {
+            "start": "09:30",
+            "end": "17:30"
+          }
+        ],
+        "tuesday": [
+          {
+            "start": "09:30",
+            "end": "17:30"
+          }
+        ],
+        "wednesday": [
+          {
+            "start": "09:30",
+            "end": "17:30"
+          }
+        ],
+        "thursday": [
+          {
+            "start": "09:30",
+            "end": "17:30"
+          }
+        ],
+        "friday": [
+          {
+            "start": "09:30",
+            "end": "17:30"
+          }
+        ],
+        "saturday": [
+          {
+            "start": "10:00",
+            "end": "14:00"
+          }
+        ],
+        "sunday": []
+      }
+    }
+  ],
+  "closures": []
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isClockTime, isDateText, isTimeZone, weekdays } from "../time/time.js";
 
 const amountMessage =
   "Enter the amount as a whole number of minor units, for example 12000 for 120.00.";
@@ -14,6 +15,13 @@ const taxKindMessage = "Choose a tax kind: none, added or included.";
 const taxTimingMessage =
   "Choose when tax is paid: with-each-payment or with-balance.";
 const taxRatesMessage = "Add at least one tax rate.";
+const minutesMessage = "Enter a whole number of minutes, 0 or more.";
+const timeZoneMessage =
+  "Use a time zone name such as Europe/London or America/Toronto.";
+const clockTimeMessage = "Use a 24-hour time such as 09:00 or 17:30.";
+const closingTimeMessage =
+  "Use a 24-hour time such as 17:30, or 24:00 for midnight.";
+const dateMessage = "Use a date such as 2026-12-25.";
 
 const idSchema = z
   .string({ error: "Enter an id." })
@@ -32,9 +40,27 @@ const wholeNumberSchema = z
   .int({ error: wholeNumberMessage })
   .min(1, { error: wholeNumberMessage });
 
+const minutesSchema = z
+  .int({ error: minutesMessage })
+  .nonnegative({ error: minutesMessage });
+const clockTimeSchema = z
+  .string({ error: clockTimeMessage })
+  .refine(isClockTime, {
+    error: clockTimeMessage,
+  });
+const closingTimeSchema = z
+  .string({ error: closingTimeMessage })
+  .refine((text) => text === "24:00" || isClockTime(text), {
+    error: closingTimeMessage,
+  });
+const dateSchema = z
+  .string({ error: dateMessage })
+  .refine(isDateText, { error: dateMessage });
+
 const fixedPriceSchema = z.strictObject({
   kind: z.literal("fixed"),
   amountMinor: amountMinorSchema,
+  durationMinutes: wholeNumberSchema,
 });
 const hourlyPriceSchema = z.strictObject({
   kind: z.literal("hourly"),
@@ -71,11 +97,17 @@ const depositRuleSchema = z.discriminatedUnion(
   { error: depositKindMessage },
 );
 
+const gapsSchema = z.strictObject({
+  beforeMinutes: minutesSchema,
+  afterMinutes: minutesSchema,
+});
+
 const serviceSchema = z.strictObject({
   id: idSchema,
   name: nameSchema,
   price: priceSchema,
   deposit: depositRuleSchema.optional(),
+  gaps: gapsSchema.optional(),
   addOnIds: z.array(idSchema),
 });
 
@@ -83,6 +115,7 @@ const addOnSchema = z.strictObject({
   id: idSchema,
   name: nameSchema,
   priceMinor: amountMinorSchema,
+  extraMinutes: minutesSchema,
   maxQuantity: wholeNumberSchema,
 });
 
@@ -123,16 +156,59 @@ const taxSchema = z.discriminatedUnion(
   },
 );
 
+const openWindowSchema = z.strictObject({
+  start: clockTimeSchema,
+  end: closingTimeSchema,
+});
+const openWindowsSchema = z.array(openWindowSchema);
+const weeklyHoursSchema = z.strictObject({
+  monday: openWindowsSchema,
+  tuesday: openWindowsSchema,
+  wednesday: openWindowsSchema,
+  thursday: openWindowsSchema,
+  friday: openWindowsSchema,
+  saturday: openWindowsSchema,
+  sunday: openWindowsSchema,
+});
+
+const resourceSchema = z.strictObject({
+  id: idSchema,
+  name: nameSchema,
+  serviceIds: z.array(idSchema),
+  hours: weeklyHoursSchema,
+});
+
+const closureSchema = z.strictObject({
+  from: dateSchema,
+  to: dateSchema,
+  reason: nameSchema,
+});
+
+const scheduleSchema = z.strictObject({
+  slotStepMinutes: wholeNumberSchema,
+  minNoticeMinutes: minutesSchema,
+  maxAdvanceDays: wholeNumberSchema,
+  gaps: gapsSchema,
+});
+
 export const settingsShapeSchema = z.strictObject({
   version: z.literal(1, { error: "This engine reads settings version 1." }),
   businessId: idSchema,
   currency: z.string().regex(/^[A-Z]{3}$/, { error: currencyMessage }),
+  timeZone: z
+    .string({ error: timeZoneMessage })
+    .refine(isTimeZone, { error: timeZoneMessage }),
   tax: taxSchema,
   defaultDeposit: depositRuleSchema,
   services: z.array(serviceSchema),
   addOns: z.array(addOnSchema),
   fees: z.array(feeSchema),
+  schedule: scheduleSchema,
+  resources: z.array(resourceSchema),
+  closures: z.array(closureSchema),
 });
+
+export { weekdays };
 
 export type Price = z.infer<typeof priceSchema>;
 export type DepositRule = z.infer<typeof depositRuleSchema>;
@@ -141,4 +217,8 @@ export type AddOn = z.infer<typeof addOnSchema>;
 export type Fee = z.infer<typeof feeSchema>;
 export type TaxRate = z.infer<typeof taxRateSchema>;
 export type TaxSettings = z.infer<typeof taxSchema>;
+export type Gaps = z.infer<typeof gapsSchema>;
+export type OpenWindow = z.infer<typeof openWindowSchema>;
+export type Resource = z.infer<typeof resourceSchema>;
+export type Closure = z.infer<typeof closureSchema>;
 export type BusinessSettings = z.infer<typeof settingsShapeSchema>;
