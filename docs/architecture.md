@@ -98,7 +98,7 @@ The in-memory store proves these promises in tests, with many requests at the sa
 | `lib`        | The result shape and plain errors                               | Built    |
 | `money`      | Exact percentages, rounded half-up                              | Built    |
 | `settings`   | Check the owner's settings                                      | Built    |
-| `quotes`     | Line items, total, deposit, tax, balance                        | Building |
+| `quotes`     | Line items, total, deposit, tax, balance                        | Built    |
 | `time`       | The only place that touches `Temporal`                          | Designed |
 | `slots`      | Free start times from hours, breaks, closures, gaps, bookings   | Designed |
 | `bookings`   | Decide a booking, a hold, a status change                       | Designed |
