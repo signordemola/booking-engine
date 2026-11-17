@@ -29,7 +29,7 @@ Code depends downward only. The core imports nothing from the layers above it.
 | Core         | `packages/core`          | Building |
 | Operations   | `packages/core`          | Building |
 | Scenarios    | `scenarios/`             | Building |
-| Platform kit | `packages/store`         | Designed |
+| Platform kit | `packages/store`         | Building |
 | Products     | `packages/mcp`, `apps/*` | Designed |
 
 ## The five contracts
@@ -101,7 +101,7 @@ The in-memory store proves these promises in tests, with many requests at the sa
 | `quotes`     | Line items, total, deposit, tax, balance                           | Built    |
 | `time`       | The only place that touches `Temporal`                             | Built    |
 | `slots`      | Free start times from hours, closures, gaps, notice and busy times | Built    |
-| `bookings`   | Decide a booking, a hold, a status change                          | Designed |
+| `bookings`   | Decide a booking, a hold, a status change                          | Built    |
 | `rules`      | Patch test, consultation, consent, book-alone, fill or full set    | Designed |
 | `policies`   | Cancellation, refund, reschedule                                   | Designed |
 | `follow-ups` | What message or action is due, and when                            | Designed |

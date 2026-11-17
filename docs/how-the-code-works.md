@@ -130,6 +130,42 @@ The question: "which start times are free?". Read the files in this order.
 
 Both public functions call `findBlockers`, so a time that `listSlots` offers is always a time that `checkSlot` accepts.
 
+## Bookings: `packages/core/src/bookings/`
+
+The question: "may this booking go ahead, and what must be saved?". The engine decides. It never saves.
+
+`booking-schema.ts`. The shape of a booking record: ids, a status, the start and end, the blocked time (the booking plus its gaps), when the hold runs out, and the amounts. It also lists the six statuses and the five actions. `occupiesSlot` says which statuses keep their time: all except `cancelled` and `expired`.
+
+`decide-booking.ts`. The public function `decideBooking({ settings, facts, request })`. It runs these steps:
+
+1. Check the input.
+2. Find a resource that is free at the start time, with the same check the slot list uses. If nobody is free, return the reasons.
+3. Price the booking with `createQuote`.
+4. Build the record. With money due today, the status is `pending` and the hold runs out after the owner's hold minutes. With nothing due, the status is `confirmed`.
+5. Return the record, the quote and one event (`booking.held` or `booking.confirmed`).
+
+`apply-booking-action.ts`. The public function `applyBookingAction`. A table lists each action, the statuses it can start from, and the status it leads to. An action from a wrong status is refused. Three actions also check the time: a hold cannot end early, an appointment cannot be completed before it ends, and a no-show cannot be marked before the start.
+
+## The store: `packages/store/`
+
+Saving is a separate package, because the engine must stay pure.
+
+`booking-store.ts`. An **interface**: the list of methods any store must have. It is the contract, with no code. A Postgres store can later implement the same interface.
+
+`in-memory-booking-store.ts`. A class that implements the interface with a `Map` in memory. It is for tests and demos. It keeps the three promises:
+
+- `saveNewBooking` refuses a booking whose blocked time overlaps another booking of the same resource and business.
+- `saveNewBooking` returns the first booking when the same booking id comes again.
+- `saveBookingChange` saves only if the stored status is still the one the caller read.
+
+Each business has its own `Map`, so one business can never read another's bookings.
+
+`book-slot.ts`. The workflow `bookSlot`: look for an earlier booking with the same id, read the busy times, ask the engine to decide, then save. If the store says the time was taken a moment ago, the client gets `booking.slot-taken`.
+
+`change-booking.ts`. The workflow `changeBooking`: load the booking, ask the engine to apply the action, then save with the status it read.
+
+Why the store must enforce the overlap rule: when 20 requests arrive together, all 20 read "free" before any of them saves. The engine says yes to all 20. Only the store, at the moment of saving, can let one through and refuse 19. `book-slot.test.ts` proves it.
+
 ## 9. `packages/core/src/operations.ts`
 
 One job: the list of everything the engine can do. Each entry has a name such as `quote.create`, a one-line summary, the shape of its input, and the function to run.
