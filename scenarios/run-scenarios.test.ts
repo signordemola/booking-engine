@@ -11,11 +11,17 @@ test("every scenario has a different id", () => {
   expect(new Set(ids).size).toBe(ids.length);
 });
 
-test.each(scenarios)(
-  "$lane: $title",
-  ({ operation, settings, request, expect: expected }) => {
-    const result = runOperation(operation, { settings, request });
+test.each(scenarios)("$lane: $title", (scenario) => {
+  const input =
+    scenario.facts === undefined
+      ? { settings: scenario.settings, request: scenario.request }
+      : {
+          settings: scenario.settings,
+          facts: scenario.facts,
+          request: scenario.request,
+        };
 
-    expect(result).toMatchObject(expected);
-  },
-);
+  expect(runOperation(scenario.operation, input)).toMatchObject(
+    scenario.expect,
+  );
+});

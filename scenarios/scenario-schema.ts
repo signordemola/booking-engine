@@ -6,6 +6,7 @@ export const scenarioFileSchema = z.strictObject({
   source: z.url(),
   business: z.string().min(1),
   operation: z.string().min(1),
+  facts: z.unknown().optional(),
   request: z.unknown(),
   expect: z.record(z.string(), z.unknown()),
 });
