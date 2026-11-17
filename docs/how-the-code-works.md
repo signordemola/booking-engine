@@ -19,6 +19,7 @@ One job: describe the shape of the owner's settings.
 
 - It is a list of small descriptions, built from the bottom up: an id, a name, an amount, then a price, a deposit rule, a service, an add-on, a fee, the tax, and at the end the whole settings document.
 - Each description also holds the message an owner sees when a value is wrong.
+- The time part: the time zone, the schedule (step, notice, booking window, gaps), the resources with their opening hours for each weekday, and the closures.
 - Where a setting has several forms, a `kind` field says which one:
   - a price is `fixed` or `hourly`;
   - a deposit rule is `none`, `percentage`, `fixed` or `full`;
@@ -33,6 +34,9 @@ One job: find mistakes that need more than one field to see.
 - `findMissingAddOns`: a service lists an add-on that does not exist.
 - `findWrongHourRanges`: an hourly service whose minimum hours are above its maximum.
 - `findFixedDepositsAbovePrice`: a fixed deposit that is more than the lowest price of the service.
+- `findWrongOpenWindows`: opening hours that end before they start, or that overlap.
+- `findMissingServices`: a resource lists a service that does not exist.
+- `findWrongClosures`: a closure that ends before it starts.
 - `findSettingsProblems` runs them all and joins their results into one list.
 
 Each function goes through a list with `forEach` and adds a problem when it finds a mistake.
@@ -90,6 +94,42 @@ The balance is the total minus the amount due today. So the two always add up to
 
 Example: a hybrid full set (US$120, deposit 25%) with a lash bath (US$10) gives a total of `13000`, `3000` due today and a balance of `10000`.
 
+## Time: `packages/core/src/time/time.ts`
+
+One job: everything about dates, clock times and time zones. It is the only file that uses `Temporal`, the built-in date and time API. The linter stops any other file from using it.
+
+- Inside the engine, an exact moment is a plain number: milliseconds since 1970. Plain numbers are easy to compare and to add minutes to.
+- At the edge, a moment is text such as `2026-11-21T15:00:00Z`. `toEpochMs` and `toInstantText` convert between the two.
+- `localTimeToEpochMs("2027-03-14", "10:00", "America/Toronto")` answers "which exact moment is 10:00 on the clock in Toronto on that date?". It returns `null` for a clock time that does not exist, such as 02:30 on the night the clocks go forward.
+- `localDateOf` and `localTimeOf` go the other way: from an exact moment to the date and the clock time in a time zone.
+
+## Slots: `packages/core/src/slots/`
+
+The question: "which start times are free?". Read the files in this order.
+
+`slot-input-schema.ts`. The shape of the input. Besides the settings and the request, slots need **facts**: the time now, and the busy times of each resource. The platform loads the busy times from its database and passes them in.
+
+`busy-times.ts`. One job: answer "is this resource busy in this time range?" fast.
+
+- `groupBusyTimes` sorts the busy times of each resource and joins the ones that overlap.
+- `isBusy` uses a binary search: it halves the list again and again until it finds the first busy time that ends after the wanted start. A list of 10,000 needs about 14 steps.
+
+`booking-shape.ts`. One job: the size of the booking.
+
+- Its length: the minutes of each service (or the hours picked), plus the extra minutes of each add-on.
+- Its gaps: the service's own gaps, or the business gaps.
+- Who can do it: the resources that offer every picked service, or the one resource the client asked for.
+
+`find-blockers.ts`. One job: the reasons a start time is not free, for one resource. No reasons means the time is free. It checks, in order: the date has passed, the date is too far ahead, the business is closed, the notice is too short, the time is outside the opening hours, the time is not on a step, and the time is busy.
+
+`prepare-slot-context.ts`. Gathers what both public functions need: the picked items, the booking size and the grouped busy times.
+
+`list-slots.ts`. The public function `listSlots({ settings, facts, request })`. For each resource and each opening window of the date, it steps from the opening time and keeps every start that has no blockers. Each start time lists who is free.
+
+`check-slot.ts`. The public function `checkSlot({ settings, facts, request })`. It checks one start time and returns `available`, who is free, and the reasons when nobody is.
+
+Both public functions call `findBlockers`, so a time that `listSlots` offers is always a time that `checkSlot` accepts.
+
 ## 9. `packages/core/src/operations.ts`
 
 One job: the list of everything the engine can do. Each entry has a name such as `quote.create`, a one-line summary, the shape of its input, and the function to run.
@@ -105,12 +145,16 @@ One job: the public API. Code outside the engine imports from here only. `index.
 Real cases as data files. This folder is its own small package, because it reads files from disk and the engine must not.
 
 - `businesses/*.json`: the settings of four demo businesses: a lash studio (US$, no tax), a Montreal salon (two taxes added), a Toronto studio hire (by the hour) and a UK photographer (VAT included).
-- `lash/`, `salon/`, `studio-hire/`, `photographer/`: one file per case. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
+- `lash/`, `salon/`, `studio-hire/`, `photographer/`: one file per case. A case about time also has `facts`: the time now and the busy times. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
 - `scenario-schema.ts`: the shape of a scenario file.
 - `load-scenarios.ts`: reads every file and attaches the settings of its business.
 - `run-scenarios.test.ts`: one test that runs every scenario through `runOperation`. The expected answer only has to list the parts that matter; extra fields in the real answer are fine.
 
 To add a case, add one JSON file. No code changes.
+
+## Shared test data: `packages/core/src/testing/demo-businesses.ts`
+
+The settings of the four demo businesses, for the tests. They hold the same data as `scenarios/businesses/*.json`.
 
 ## The tests
 

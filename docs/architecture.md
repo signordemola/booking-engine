@@ -93,18 +93,18 @@ The in-memory store proves these promises in tests, with many requests at the sa
 
 ## The core, module by module
 
-| Module       | Its job                                                         | Status   |
-| ------------ | --------------------------------------------------------------- | -------- |
-| `lib`        | The result shape and plain errors                               | Built    |
-| `money`      | Exact percentages, rounded half-up                              | Built    |
-| `settings`   | Check the owner's settings                                      | Built    |
-| `quotes`     | Line items, total, deposit, tax, balance                        | Built    |
-| `time`       | The only place that touches `Temporal`                          | Designed |
-| `slots`      | Free start times from hours, breaks, closures, gaps, bookings   | Designed |
-| `bookings`   | Decide a booking, a hold, a status change                       | Designed |
-| `rules`      | Patch test, consultation, consent, book-alone, fill or full set | Designed |
-| `policies`   | Cancellation, refund, reschedule                                | Designed |
-| `follow-ups` | What message or action is due, and when                         | Designed |
+| Module       | Its job                                                            | Status   |
+| ------------ | ------------------------------------------------------------------ | -------- |
+| `lib`        | The result shape and plain errors                                  | Built    |
+| `money`      | Exact percentages, rounded half-up                                 | Built    |
+| `settings`   | Check the owner's settings                                         | Built    |
+| `quotes`     | Line items, total, deposit, tax, balance                           | Built    |
+| `time`       | The only place that touches `Temporal`                             | Built    |
+| `slots`      | Free start times from hours, closures, gaps, notice and busy times | Built    |
+| `bookings`   | Decide a booking, a hold, a status change                          | Designed |
+| `rules`      | Patch test, consultation, consent, book-alone, fill or full set    | Designed |
+| `policies`   | Cancellation, refund, reschedule                                   | Designed |
+| `follow-ups` | What message or action is due, and when                            | Designed |
 
 Imports go one way: `lib`, then `money`, then `settings`, then the feature modules. The linter will enforce the order.
 

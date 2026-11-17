@@ -6,15 +6,15 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 ## Status
 
-This project is at the start. **You cannot take a booking with it yet.** The money side works and is tested: it can price a booking, but it does not know about dates or times yet.
+This project is at the start. **You cannot take a booking with it yet.** The money side and the time side work and are tested: it can price a booking and list the free times. It cannot yet decide or record a booking.
 
 | Stage                                                             | Status      |
 | ----------------------------------------------------------------- | ----------- |
 | Repo setup (TypeScript, tests, lint, CI)                          | Done        |
 | Contracts: scenario files, operation shape, public API            | Done        |
 | Money: add-ons, deposit, tax, fees, balance                       | Done        |
-| Time: hours, breaks, closures, gaps, lead time, clock changes     | Next        |
-| Bookings: no overlap, hold during payment, safe retries           | Not started |
+| Time: hours, breaks, closures, gaps, lead time, clock changes     | Done        |
+| Bookings: no overlap, hold during payment, safe retries           | Next        |
 | Rules: patch test, consultation, consent, fill or full set, staff | Not started |
 | Policies: cancellation, refund, reschedule                        | Not started |
 | Follow-ups: reminders, balance links, hold expiry                 | Not started |
@@ -26,6 +26,8 @@ What works today:
 
 - `parseSettings` checks a business's settings (services, add-ons, deposit rules) and returns plain errors an owner can read.
 - `createQuote` prices what a client picked: line items, tax, the amount due today and the balance, with the rule behind each deposit. It handles add-ons, fees, prices by the hour, four kinds of deposit, and tax that is added on top or included in the price.
+- `listSlots` lists the free start times on a date, for one or more staff or rooms. It applies opening hours, lunch breaks, closures, the length of the booking, gaps between bookings, the notice a booking needs and the busy times. `checkSlot` says if one time is free, and why not.
+- Time zones are handled with the built-in `Temporal` API, with tests for the days when the clocks change in Toronto and in London.
 - Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 
 [PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.
