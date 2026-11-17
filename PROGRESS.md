@@ -4,20 +4,21 @@ Newest first. Updated at the end of every session.
 
 ## 2026-11-17
 
-- Milestone: roadmap stage 1 - Contracts - done. Stage 2 - Money - next. (The plan is `docs/roadmap.md`: stages 1 to 8.)
+- Milestone: roadmap stage 2 - Money - done. Stage 3 - Time - next. (The plan is `docs/roadmap.md`: stages 1 to 8.)
 - Done since the last entry:
   - New direction: a booking engine for booking platforms, with the owner's rules as settings. Milestones revised; each one proves a real scenario as tests (first: US$120 service + US$10 add-on, deposit US$30, balance US$100).
   - Phase 1, money: `percentageOf`, exact and rounded half-up, with the big.js library. Phase 2, settings: `parseSettings` checks the owner's settings (services, add-ons, deposit rules) and returns plain errors.
   - Phase 3, quote totals: `createQuote` turns the client's picked services and add-ons into line items and a total (US$120 + US$10 = US$130), and rejects a request the owner's settings do not allow.
   - Wrote the architecture and the roadmap: one pure core, with thin products on top (client builds, tools for AI agents, a simulator, a benchmark), and real cases stored as data files.
+  - Stage 2, money: the quote now gives the deposit (none, percentage, fixed or full; the service rule wins over the business rule), fees due today or later, prices by the hour, tax added on top or included in the price, the amount due today and the balance, with the reason for each rule. Four demo businesses and 8 real cases run as scenario files.
   - Stage 1, contracts: each public function takes one input object; every error has a stable code; one list of operations; a public API with a test that guards it; real cases as JSON files in `scenarios/` that run as tests; the linter enforces the import order.
   - Rewrote the first two phases in regular modern TypeScript after a comparison with Cal.com, Medusa, Zod and tRPC. Moved to Node 26 and the built-in `Temporal`. Added Dependabot and a rule that `main` only changes through a pull request with green checks.
-- Tests: 56 passing, 0 failing (53 in the engine, 3 for the scenario files). CI is green on Node 26.
+- Tests: 99 passing, 0 failing (90 in the engine, 9 for the scenario files). CI is green on Node 26.
 - Learned (interview topics practised):
   - Types are removed before the code runs, so Zod checks outside data at runtime; `z.infer` makes the type from the same schema.
   - A discriminated union: the deposit rule has a `kind` field, and TypeScript narrows on it.
   - Decimal numbers are wrong for money: `Math.round(amount * percent / 100)` was wrong by one cent in 50 of 2.6 million test cases.
-- Next step: stage 2, money: deposit, tax, fees and prices by the hour.
+- Next step: stage 3, time: opening hours, free start times, gaps, lead time and clock changes.
 - Blockers / questions: none
 
 Scale features (designed or built): settings carry a `version` and a `businessId`; pure operations with JSON in and out; scenario files; one-way imports (all built). The store, the Postgres rule and retry keys are designed only.

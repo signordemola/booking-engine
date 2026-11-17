@@ -5,16 +5,18 @@ const lashStudio = {
   version: 1,
   businessId: "lash-by-nadia",
   currency: "USD",
+  tax: { kind: "none" },
   defaultDeposit: { kind: "none" },
   services: [
     {
       id: "lash-removal",
       name: "Lash removal",
-      priceMinor: 2500,
+      price: { kind: "fixed", amountMinor: 2500 },
       addOnIds: [],
     },
   ],
   addOns: [],
+  fees: [],
 };
 
 test("every operation has a different name and a summary", () => {

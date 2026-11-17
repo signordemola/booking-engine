@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "businessId": "clara-monet-photography",
+  "currency": "GBP",
+  "tax": {
+    "kind": "included",
+    "rates": [{ "id": "vat", "name": "VAT", "percent": 20 }],
+    "timing": "with-each-payment"
+  },
+  "defaultDeposit": { "kind": "none" },
+  "services": [
+    {
+      "id": "portrait-session",
+      "name": "Portrait session",
+      "price": { "kind": "fixed", "amountMinor": 25000 },
+      "deposit": { "kind": "fixed", "amountMinor": 7500 },
+      "addOnIds": []
+    }
+  ],
+  "addOns": [],
+  "fees": [
+    { "id": "travel", "name": "Travel", "amountMinor": 2000, "due": "today" }
+  ]
+}

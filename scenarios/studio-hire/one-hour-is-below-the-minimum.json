@@ -1,0 +1,19 @@
+{
+  "id": "one-hour-is-below-the-minimum",
+  "title": "A hire of 1 hour is refused, because the studio has a minimum of 2 hours",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "quote.create",
+  "request": {
+    "services": [{ "serviceId": "daylight-studio", "hours": 1, "addOns": [] }]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "quote.hours-out-of-range",
+        "message": "\"Daylight studio\" can be booked for 2 to 8 hours."
+      }
+    ]
+  }
+}

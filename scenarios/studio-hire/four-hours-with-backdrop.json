@@ -1,0 +1,36 @@
+{
+  "id": "four-hours-with-backdrop",
+  "title": "A studio hired for 4 hours with a backdrop: half of the hire today, all tax with the balance",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 4,
+        "addOns": [{ "addOnId": "backdrop", "quantity": 1 }]
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "currency": "CAD",
+      "lineItems": [
+        {
+          "kind": "service",
+          "hours": 4,
+          "amountMinor": 34000,
+          "depositMinor": 17000
+        },
+        { "kind": "add-on", "name": "Paper backdrop", "amountMinor": 2500 }
+      ],
+      "subtotalMinor": 36500,
+      "taxLines": [{ "name": "HST", "percent": 13, "amountMinor": 4745 }],
+      "totalMinor": 41245,
+      "dueToday": { "depositMinor": 17000, "taxMinor": 0, "totalMinor": 17000 },
+      "balance": { "taxMinor": 4745, "totalMinor": 24245 }
+    }
+  }
+}

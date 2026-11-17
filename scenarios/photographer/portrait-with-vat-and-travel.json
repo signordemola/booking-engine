@@ -1,0 +1,28 @@
+{
+  "id": "portrait-with-vat-and-travel",
+  "title": "A UK portrait session with a travel fee: the prices already include VAT",
+  "source": "https://www.gov.uk/vat-rates",
+  "business": "photographer",
+  "operation": "quote.create",
+  "request": {
+    "services": [{ "serviceId": "portrait-session", "addOns": [] }],
+    "feeIds": ["travel"]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "currency": "GBP",
+      "pricesIncludeTax": true,
+      "subtotalMinor": 27000,
+      "taxLines": [{ "name": "VAT", "percent": 20, "amountMinor": 4500 }],
+      "totalMinor": 27000,
+      "dueToday": {
+        "depositMinor": 7500,
+        "feesMinor": 2000,
+        "taxMinor": 1583,
+        "totalMinor": 9500
+      },
+      "balance": { "taxMinor": 2917, "totalMinor": 17500 }
+    }
+  }
+}

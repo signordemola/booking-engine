@@ -21,7 +21,7 @@ export const operations: Operation[] = [
   {
     name: "quote.create",
     summary:
-      "Price the services and add-ons a client picked: line items and a total.",
+      "Price what a client picked: line items, tax, the amount due today and the balance.",
     inputSchema: createQuoteInputSchema,
     run: createQuote,
   },

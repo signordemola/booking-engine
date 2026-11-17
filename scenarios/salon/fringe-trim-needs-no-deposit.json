@@ -1,0 +1,19 @@
+{
+  "id": "fringe-trim-needs-no-deposit",
+  "title": "A small service has its own rule: no deposit, so nothing is due today",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "quote.create",
+  "request": {
+    "services": [{ "serviceId": "fringe-trim", "addOns": [] }]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "subtotalMinor": 1500,
+      "totalMinor": 1725,
+      "dueToday": { "depositMinor": 0, "taxMinor": 0, "totalMinor": 0 },
+      "balance": { "taxMinor": 225, "totalMinor": 1725 }
+    }
+  }
+}

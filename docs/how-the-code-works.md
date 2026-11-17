@@ -4,31 +4,36 @@ A reading guide. Read the files in this order. Each one has one job.
 
 ## 1. `packages/core/src/money/money.ts`
 
-One job: take a percentage of an amount of money, and round the same way every time.
+One job: exact arithmetic on money, rounded the same way every time.
 
 - Money is a whole number of minor units (cents, pence). US$120 is `12000`.
 - `percentageOf(12000, 25)` returns `3000`. That is 25% of US$120: US$30.
-- The result is rounded half-up. Half a cent or more goes up. `percentageOf(1050, 25)` is 262.5 cents, so it returns `263`.
+- `includedTaxOf(27000, 20, 20)` returns `4500`. A price of £270 that already includes 20% VAT holds £45 of VAT.
+- Both round half-up. Half a cent or more goes up.
 
-Read the one line from left to right: take the amount, multiply by the percent, divide by 100, round to a whole number (half-up), and give back a normal number. The `big.js` library does the arithmetic, because normal JavaScript decimals are sometimes wrong by one cent.
+Read each function from left to right: take the amount, multiply, divide, round to a whole number, and give back a normal number. The `big.js` library does the arithmetic, because normal JavaScript decimals are sometimes wrong by one cent.
 
 ## 2. `packages/core/src/settings/settings-schema.ts`
 
 One job: describe the shape of the owner's settings.
 
-- It is a list of small descriptions, built from the bottom up: an id, a name, an amount, then a deposit rule, a service, an add-on, and at the end the whole settings document.
+- It is a list of small descriptions, built from the bottom up: an id, a name, an amount, then a price, a deposit rule, a service, an add-on, a fee, the tax, and at the end the whole settings document.
 - Each description also holds the message an owner sees when a value is wrong.
-- A deposit rule is one of four kinds: `none`, `percentage`, `fixed` or `full`. The `kind` field says which one.
-- The last four lines make the TypeScript types from the same descriptions, so the check and the types cannot disagree.
+- Where a setting has several forms, a `kind` field says which one:
+  - a price is `fixed` or `hourly`;
+  - a deposit rule is `none`, `percentage`, `fixed` or `full`;
+  - the tax is `none`, `added` or `included`.
+- The last lines make the TypeScript types from the same descriptions, so the check and the types cannot disagree.
 
 ## 3. `packages/core/src/settings/check-settings.ts`
 
 One job: find mistakes that need more than one field to see.
 
-- `findRepeatedIds`: two services, or two add-ons, with the same id.
+- `findRepeatedIds`: two services, add-ons, fees or tax rates with the same id.
 - `findMissingAddOns`: a service lists an add-on that does not exist.
-- `findFixedDepositsAbovePrice`: a fixed deposit that is more than the price of the service.
-- `findSettingsProblems` runs all three and joins their results into one list.
+- `findWrongHourRanges`: an hourly service whose minimum hours are above its maximum.
+- `findFixedDepositsAbovePrice`: a fixed deposit that is more than the lowest price of the service.
+- `findSettingsProblems` runs them all and joins their results into one list.
 
 Each function goes through a list with `forEach` and adds a problem when it finds a mistake.
 
@@ -48,25 +53,42 @@ Two small files that the settings code and the quote code share.
 
 ## 6. `packages/core/src/quotes/quote-request-schema.ts`
 
-One job: describe the shape of a quote request. A request is what the client picked: a list of services, and for each service a list of add-ons with a quantity.
+One job: describe the shape of a quote request. A request is what the client picked: a list of services, each with its add-ons and, for an hourly service, the number of hours. It can also list fees, such as a home visit.
 
 ## 7. `packages/core/src/quotes/find-requested-items.ts`
 
-One job: look up what the client picked in the owner's settings.
+One job: look up what the client picked in the owner's settings. It has one small function for each kind of thing.
 
-- For each requested service, it finds the service in the settings. If it does not exist, it adds a problem.
-- For each requested add-on, it checks three things: the service offers it, it is listed once, and the quantity is not above the owner's maximum.
-- It returns the real services and add-ons, or the list of problems.
+- `findPrice`: the price of a service. A fixed price takes no hours. An hourly price needs hours inside the owner's range, and costs the hourly price times the hours.
+- `findAddOns`: each add-on must be offered by the service, listed once, and not above the owner's maximum.
+- `findFees`: each fee must exist and be listed once.
+- `findRequestedItems` runs them for every picked service and returns the real items, or the list of problems.
 
-## 8. `packages/core/src/quotes/create-quote.ts`
+## 8. The quote, in four small files
 
-One job: the public function, `createQuote({ settings, request })`. It takes one input object and runs three steps.
+`calculate-deposit.ts`. One job: the deposit of one service.
+
+- The service's own rule wins. Without one, the business rule applies.
+- `none` is 0. `percentage` is that share of the service price. `fixed` is the set amount. `full` is the service and its add-ons.
+
+`calculate-tax.ts`. One job: the tax of the whole quote, and today's share of it.
+
+- With tax `added`, each rate is a percentage of the subtotal. With tax `included`, the tax is already inside the prices, and the function works out how much.
+- With the timing `with-each-payment`, today's payment carries its share. With `with-balance`, today's share is 0.
+
+`quote-line-items.ts`. One job: the shapes of the three kinds of line (service, add-on, fee), and a small function that builds each one.
+
+`create-quote.ts`. One job: the public function, `createQuote({ settings, request })`. It runs these steps:
 
 1. Check the shape of the whole input: the settings and the request together.
 2. Look up the picked items in the settings (file 7).
-3. Make one line item for each service and each add-on, then add the amounts to get the total.
+3. Make the lines: one for each service with its deposit, one for each add-on, one for each fee. Add a reason for each deposit rule used.
+4. Add up the subtotal, the deposits and the fees due today.
+5. Calculate the tax, then the total, the amount due today and the balance.
 
-An add-on line costs its price times its quantity. Example: a hybrid full set (US$120) with a lash bath (US$10) gives two line items and a total of `13000`, which is US$130.
+The balance is the total minus the amount due today. So the two always add up to the total, to the cent.
+
+Example: a hybrid full set (US$120, deposit 25%) with a lash bath (US$10) gives a total of `13000`, `3000` due today and a balance of `10000`.
 
 ## 9. `packages/core/src/operations.ts`
 
@@ -82,8 +104,8 @@ One job: the public API. Code outside the engine imports from here only. `index.
 
 Real cases as data files. This folder is its own small package, because it reads files from disk and the engine must not.
 
-- `businesses/lash-studio.json`: the settings of a demo business.
-- `lash/*.json`: one file per case. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
+- `businesses/*.json`: the settings of four demo businesses: a lash studio (US$, no tax), a Montreal salon (two taxes added), a Toronto studio hire (by the hour) and a UK photographer (VAT included).
+- `lash/`, `salon/`, `studio-hire/`, `photographer/`: one file per case. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
 - `scenario-schema.ts`: the shape of a scenario file.
 - `load-scenarios.ts`: reads every file and attaches the settings of its business.
 - `run-scenarios.test.ts`: one test that runs every scenario through `runOperation`. The expected answer only has to list the parts that matter; extra fields in the real answer are fine.

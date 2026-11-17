@@ -14,8 +14,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | ----- | -------------- | --------------------------------------------------------------------------------- | ----------- |
 | 0     | Repo setup     | Checks run on every push                                                          | Done        |
 | 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Done        |
-| 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Next        |
-| 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Not started |
+| 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Done        |
+| 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Next        |
 | 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Not started |
 | 5     | Rules          | Only times at least 48 hours after the patch test                                 | Not started |
 | 6     | Policies       | "Non-refundable. Moves once."                                                     | Not started |
@@ -42,7 +42,7 @@ Done: the homepage quote runs from `scenarios/lash/full-set-with-lash-bath.json`
 - Fees, such as travel, due today or later.
 - Prices by the hour, with minimum and maximum hours.
 
-Done when these run as scenarios: the homepage example; a studio in British Columbia with two taxes; a UK studio with VAT in the price; a studio hire by the hour with an extra.
+Done: these run as scenarios. The homepage example; a Montreal salon with two taxes; a UK photographer with VAT in the price and a travel fee; a Toronto studio hired by the hour with a backdrop.
 
 ### Stage 3: Time
 

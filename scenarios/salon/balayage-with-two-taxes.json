@@ -1,0 +1,30 @@
+{
+  "id": "balayage-with-two-taxes",
+  "title": "A Montreal salon adds GST and QST, and the deposit payment carries its share of each",
+  "source": "https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/tables-of-gst-and-qst-rates/",
+  "business": "salon",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": [{ "addOnId": "bond-treatment", "quantity": 1 }]
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "currency": "CAD",
+      "pricesIncludeTax": false,
+      "subtotalMinor": 27500,
+      "taxLines": [
+        { "name": "GST", "percent": 5, "amountMinor": 1375 },
+        { "name": "QST", "percent": 9.975, "amountMinor": 2743 }
+      ],
+      "totalMinor": 31618,
+      "dueToday": { "depositMinor": 6000, "taxMinor": 899, "totalMinor": 6899 },
+      "balance": { "taxMinor": 3219, "totalMinor": 24719 }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { BusinessSettings } from "./settings-schema.js";
+import type { BusinessSettings, Service } from "./settings-schema.js";
 
 export type SettingsProblem = {
   code: string;
@@ -6,8 +6,13 @@ export type SettingsProblem = {
   message: string;
 };
 
+const lowestPriceOf = (service: Service) =>
+  service.price.kind === "fixed"
+    ? service.price.amountMinor
+    : service.price.hourlyMinor * service.price.minHours;
+
 const findRepeatedIds = (
-  listName: string,
+  pathToList: string[],
   items: { id: string }[],
 ): SettingsProblem[] => {
   const problems: SettingsProblem[] = [];
@@ -17,7 +22,7 @@ const findRepeatedIds = (
     if (firstIndex !== index) {
       problems.push({
         code: "settings.repeated-id",
-        path: [listName, index, "id"],
+        path: [...pathToList, index, "id"],
         message: `The id "${item.id}" is used more than once. Each id must be different.`,
       });
     }
@@ -45,6 +50,25 @@ const findMissingAddOns = (settings: BusinessSettings): SettingsProblem[] => {
   return problems;
 };
 
+const findWrongHourRanges = (settings: BusinessSettings): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+
+  settings.services.forEach((service, index) => {
+    if (
+      service.price.kind === "hourly" &&
+      service.price.minHours > service.price.maxHours
+    ) {
+      problems.push({
+        code: "settings.hours-range",
+        path: ["services", index, "price"],
+        message: `The minimum hours of "${service.name}" are more than its maximum hours.`,
+      });
+    }
+  });
+
+  return problems;
+};
+
 const findFixedDepositsAbovePrice = (
   settings: BusinessSettings,
 ): SettingsProblem[] => {
@@ -53,11 +77,9 @@ const findFixedDepositsAbovePrice = (
 
   settings.services.forEach((service, index) => {
     const ownDeposit = service.deposit;
+    const lowestPrice = lowestPriceOf(service);
 
-    if (
-      ownDeposit?.kind === "fixed" &&
-      ownDeposit.amountMinor > service.priceMinor
-    ) {
+    if (ownDeposit?.kind === "fixed" && ownDeposit.amountMinor > lowestPrice) {
       problems.push({
         code: "settings.fixed-deposit-above-price",
         path: ["services", index, "deposit"],
@@ -68,7 +90,7 @@ const findFixedDepositsAbovePrice = (
     if (
       !ownDeposit &&
       defaultDeposit.kind === "fixed" &&
-      defaultDeposit.amountMinor > service.priceMinor
+      defaultDeposit.amountMinor > lowestPrice
     ) {
       problems.push({
         code: "settings.fixed-deposit-above-price",
@@ -84,8 +106,14 @@ const findFixedDepositsAbovePrice = (
 export const findSettingsProblems = (
   settings: BusinessSettings,
 ): SettingsProblem[] => [
-  ...findRepeatedIds("services", settings.services),
-  ...findRepeatedIds("addOns", settings.addOns),
+  ...findRepeatedIds(["services"], settings.services),
+  ...findRepeatedIds(["addOns"], settings.addOns),
+  ...findRepeatedIds(["fees"], settings.fees),
+  ...findRepeatedIds(
+    ["tax", "rates"],
+    settings.tax.kind === "none" ? [] : settings.tax.rates,
+  ),
   ...findMissingAddOns(settings),
+  ...findWrongHourRanges(settings),
   ...findFixedDepositsAbovePrice(settings),
 ];

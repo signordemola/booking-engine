@@ -1,0 +1,23 @@
+{
+  "id": "home-visit-fee-is-paid-today",
+  "title": "A home visit fee is paid today, with the deposit",
+  "source": "https://www.demolastudio.com/work/hem-studios-booking-system",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "request": {
+    "services": [{ "serviceId": "hybrid-full-set", "addOns": [] }],
+    "feeIds": ["home-visit"]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "totalMinor": 14000,
+      "dueToday": {
+        "depositMinor": 3000,
+        "feesMinor": 2000,
+        "totalMinor": 5000
+      },
+      "balance": { "totalMinor": 9000 }
+    }
+  }
+}
