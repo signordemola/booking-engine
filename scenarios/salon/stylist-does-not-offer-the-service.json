@@ -1,0 +1,30 @@
+{
+  "id": "stylist-does-not-offer-the-service",
+  "title": "A client cannot book a service with a stylist who does not offer it",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-10T15:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "date": "2026-11-18",
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": []
+      }
+    ],
+    "resourceId": "noah"
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "slots.resource-cannot-do-service",
+        "message": "\"Noah\" does not offer \"Balayage\"."
+      }
+    ]
+  }
+}

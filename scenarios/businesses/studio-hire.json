@@ -2,12 +2,22 @@
   "version": 1,
   "businessId": "northlight-studio",
   "currency": "CAD",
+  "timeZone": "America/Toronto",
   "tax": {
     "kind": "added",
-    "rates": [{ "id": "hst", "name": "HST", "percent": 13 }],
+    "rates": [
+      {
+        "id": "hst",
+        "name": "HST",
+        "percent": 13
+      }
+    ],
     "timing": "with-balance"
   },
-  "defaultDeposit": { "kind": "percentage", "percent": 50 },
+  "defaultDeposit": {
+    "kind": "percentage",
+    "percent": 50
+  },
   "services": [
     {
       "id": "daylight-studio",
@@ -26,14 +36,83 @@
       "id": "backdrop",
       "name": "Paper backdrop",
       "priceMinor": 2500,
+      "extraMinutes": 0,
       "maxQuantity": 2
     },
     {
       "id": "lighting-kit",
       "name": "Lighting kit",
       "priceMinor": 4000,
+      "extraMinutes": 0,
       "maxQuantity": 1
     }
   ],
-  "fees": []
+  "fees": [],
+  "schedule": {
+    "slotStepMinutes": 60,
+    "minNoticeMinutes": 1440,
+    "maxAdvanceDays": 180,
+    "gaps": {
+      "beforeMinutes": 0,
+      "afterMinutes": 30
+    }
+  },
+  "resources": [
+    {
+      "id": "daylight-room",
+      "name": "Daylight room",
+      "serviceIds": ["daylight-studio"],
+      "hours": {
+        "monday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "tuesday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "wednesday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "thursday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "friday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "saturday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ],
+        "sunday": [
+          {
+            "start": "08:00",
+            "end": "22:00"
+          }
+        ]
+      }
+    }
+  ],
+  "closures": [
+    {
+      "from": "2026-12-25",
+      "to": "2026-12-26",
+      "reason": "Christmas"
+    }
+  ]
 }

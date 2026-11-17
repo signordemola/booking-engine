@@ -20,10 +20,12 @@ const requestedServiceSchema = z.strictObject({
   addOns: z.array(requestedAddOnSchema),
 });
 
+export const requestedServicesSchema = z
+  .array(requestedServiceSchema)
+  .min(1, { error: "Choose at least one service." });
+
 export const quoteRequestSchema = z.strictObject({
-  services: z
-    .array(requestedServiceSchema)
-    .min(1, { error: "Choose at least one service." }),
+  services: requestedServicesSchema,
   feeIds: z.array(idSchema).default([]),
 });
 

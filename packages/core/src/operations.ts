@@ -2,6 +2,12 @@ import type { z } from "zod";
 import type { Result } from "./lib/result.js";
 import { createQuote, createQuoteInputSchema } from "./quotes/create-quote.js";
 import { parseSettings, settingsSchema } from "./settings/parse-settings.js";
+import { checkSlot } from "./slots/check-slot.js";
+import { listSlots } from "./slots/list-slots.js";
+import {
+  checkSlotInputSchema,
+  listSlotsInputSchema,
+} from "./slots/slot-input-schema.js";
 
 export type Operation = {
   name: string;
@@ -24,6 +30,20 @@ export const operations: Operation[] = [
       "Price what a client picked: line items, tax, the amount due today and the balance.",
     inputSchema: createQuoteInputSchema,
     run: createQuote,
+  },
+  {
+    name: "slots.list",
+    summary:
+      "List the free start times on one date for the services a client picked.",
+    inputSchema: listSlotsInputSchema,
+    run: listSlots,
+  },
+  {
+    name: "slots.check",
+    summary:
+      "Say if one start time is free, and give the reasons when it is not.",
+    inputSchema: checkSlotInputSchema,
+    run: checkSlot,
   },
 ];
 

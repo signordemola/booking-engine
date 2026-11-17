@@ -1,0 +1,33 @@
+{
+  "id": "closed-at-christmas",
+  "title": "A closed date has no start times, and the answer gives the reason",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "date": "2026-12-25",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 2,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "slots": [],
+      "reasons": [
+        {
+          "code": "slot.closed",
+          "message": "The business is closed on this date: Christmas."
+        }
+      ]
+    }
+  }
+}

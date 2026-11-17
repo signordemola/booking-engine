@@ -2,20 +2,36 @@
   "version": 1,
   "businessId": "lash-by-nadia",
   "currency": "USD",
-  "tax": { "kind": "none" },
-  "defaultDeposit": { "kind": "none" },
+  "timeZone": "America/New_York",
+  "tax": {
+    "kind": "none"
+  },
+  "defaultDeposit": {
+    "kind": "none"
+  },
   "services": [
     {
       "id": "hybrid-full-set",
       "name": "Hybrid full set",
-      "price": { "kind": "fixed", "amountMinor": 12000 },
-      "deposit": { "kind": "percentage", "percent": 25 },
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 12000,
+        "durationMinutes": 150
+      },
+      "deposit": {
+        "kind": "percentage",
+        "percent": 25
+      },
       "addOnIds": ["lash-bath", "aftercare-kit"]
     },
     {
       "id": "lash-removal",
       "name": "Lash removal",
-      "price": { "kind": "fixed", "amountMinor": 2500 },
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 2500,
+        "durationMinutes": 30
+      },
       "addOnIds": []
     }
   ],
@@ -24,12 +40,14 @@
       "id": "lash-bath",
       "name": "Lash bath",
       "priceMinor": 1000,
+      "extraMinutes": 15,
       "maxQuantity": 1
     },
     {
       "id": "aftercare-kit",
       "name": "Aftercare kit",
       "priceMinor": 1800,
+      "extraMinutes": 0,
       "maxQuantity": 3
     }
   ],
@@ -39,6 +57,63 @@
       "name": "Home visit",
       "amountMinor": 2000,
       "due": "today"
+    },
+    {
+      "id": "after-hours",
+      "name": "After-hours appointment",
+      "amountMinor": 1500,
+      "due": "later"
     }
-  ]
+  ],
+  "schedule": {
+    "slotStepMinutes": 30,
+    "minNoticeMinutes": 120,
+    "maxAdvanceDays": 60,
+    "gaps": {
+      "beforeMinutes": 0,
+      "afterMinutes": 15
+    }
+  },
+  "resources": [
+    {
+      "id": "nadia",
+      "name": "Nadia",
+      "serviceIds": ["hybrid-full-set", "lash-removal"],
+      "hours": {
+        "monday": [],
+        "tuesday": [
+          {
+            "start": "10:00",
+            "end": "18:00"
+          }
+        ],
+        "wednesday": [
+          {
+            "start": "10:00",
+            "end": "18:00"
+          }
+        ],
+        "thursday": [
+          {
+            "start": "10:00",
+            "end": "18:00"
+          }
+        ],
+        "friday": [
+          {
+            "start": "10:00",
+            "end": "18:00"
+          }
+        ],
+        "saturday": [
+          {
+            "start": "10:00",
+            "end": "18:00"
+          }
+        ],
+        "sunday": []
+      }
+    }
+  ],
+  "closures": []
 }

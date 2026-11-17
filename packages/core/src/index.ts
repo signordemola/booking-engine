@@ -10,12 +10,19 @@ export type {
 } from "./quotes/quote-line-items.js";
 export type { QuoteRequest } from "./quotes/quote-request-schema.js";
 export { parseSettings } from "./settings/parse-settings.js";
+export { checkSlot, type SlotCheck } from "./slots/check-slot.js";
+export { listSlots, type Slot, type SlotList } from "./slots/list-slots.js";
+export type { BusyTime, SlotFacts } from "./slots/slot-input-schema.js";
 export type {
   AddOn,
   BusinessSettings,
   DepositRule,
+  Closure,
   Fee,
+  Gaps,
+  OpenWindow,
   Price,
+  Resource,
   Service,
   TaxRate,
   TaxSettings,

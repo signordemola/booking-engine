@@ -1,0 +1,53 @@
+{
+  "id": "gap-after-a-hire",
+  "title": "After a hire that ends at 14:00, the 30-minute gap for cleaning makes 15:00 the next start",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [
+      {
+        "resourceId": "daylight-room",
+        "start": "2026-11-21T15:00:00Z",
+        "end": "2026-11-21T19:30:00Z"
+      }
+    ]
+  },
+  "request": {
+    "date": "2026-11-21",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 2,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "durationMinutes": 120,
+      "slots": [
+        {
+          "localStart": "15:00"
+        },
+        {
+          "localStart": "16:00"
+        },
+        {
+          "localStart": "17:00"
+        },
+        {
+          "localStart": "18:00"
+        },
+        {
+          "localStart": "19:00"
+        },
+        {
+          "localStart": "20:00"
+        }
+      ]
+    }
+  }
+}

@@ -15,8 +15,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | 0     | Repo setup     | Checks run on every push                                                          | Done        |
 | 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Done        |
 | 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Done        |
-| 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Next        |
-| 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Not started |
+| 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Done        |
+| 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Next        |
 | 5     | Rules          | Only times at least 48 hours after the patch test                                 | Not started |
 | 6     | Policies       | "Non-refundable. Moves once."                                                     | Not started |
 | 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Not started |
@@ -46,15 +46,16 @@ Done: these run as scenarios. The homepage example; a Montreal salon with two ta
 
 ### Stage 3: Time
 
-- One time module. It is the only code that touches `Temporal`.
-- Opening hours, breaks, days off and one-off closures.
-- Free start times: duration from the services and add-ons, gaps before and after, lead time, how far ahead a client can book, and existing bookings.
-- "Why not this time?": the reason a time is not offered.
-- Resources (a staff member or a room) from the start, so one resource is only a special case.
+- One time module. It is the only code that touches `Temporal`, and the linter enforces that.
+- Settings: the time zone, opening hours per weekday for each resource, closures, the step between start times, the notice a booking needs, how far ahead a client can book, and the gaps before and after a booking.
+- A lunch break is the space between two opening windows.
+- Free start times: the length comes from the services and add-ons; gaps, notice, the booking window, closures and busy times all apply.
+- "Why not this time?": `slots.check` gives the reasons a time is not free.
+- Resources (a staff member or a room) from the start. With several, each start time lists who is free.
 - Days when the clocks change, in London and in Toronto.
-- A speed test with 10,000 bookings.
+- A speed test with 10,000 busy times.
 
-Done when: the studio hire case and both clock-change days run as scenarios, and the speed test passes.
+Done: the studio hire case, both clock-change days and the two-stylist cases run as scenarios, and the speed test passes.
 
 ### Stage 4: Bookings
 

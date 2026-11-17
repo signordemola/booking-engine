@@ -1,0 +1,32 @@
+{
+  "id": "two-days-of-notice",
+  "title": "A photographer who needs 2 days of notice cannot be booked for tomorrow",
+  "source": "https://www.demolastudio.com/for/photographers",
+  "business": "photographer",
+  "operation": "slots.check",
+  "facts": {
+    "now": "2026-11-17T10:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "start": "2026-11-18T10:00:00Z",
+    "services": [
+      {
+        "serviceId": "portrait-session",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "available": false,
+      "reasons": [
+        {
+          "code": "slot.too-soon",
+          "message": "Bookings need at least 2 days of notice."
+        }
+      ]
+    }
+  }
+}

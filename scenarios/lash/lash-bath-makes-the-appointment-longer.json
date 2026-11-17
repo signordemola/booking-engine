@@ -1,0 +1,32 @@
+{
+  "id": "lash-bath-makes-the-appointment-longer",
+  "title": "A lash bath adds 15 minutes, so a 2 hours 30 full set blocks 2 hours 45",
+  "source": "https://www.demolastudio.com",
+  "business": "lash-studio",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "date": "2026-11-21",
+    "services": [
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": [
+          {
+            "addOnId": "lash-bath",
+            "quantity": 1
+          }
+        ]
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "timeZone": "America/New_York",
+      "durationMinutes": 165
+    }
+  }
+}
