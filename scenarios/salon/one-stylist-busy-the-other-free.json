@@ -1,0 +1,33 @@
+{
+  "id": "one-stylist-busy-the-other-free",
+  "title": "When one stylist is busy, the time is still free with the other, and the answer says who",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "slots.check",
+  "facts": {
+    "now": "2026-11-10T15:00:00Z",
+    "busy": [
+      {
+        "resourceId": "camille",
+        "start": "2026-11-18T16:00:00Z",
+        "end": "2026-11-18T17:00:00Z"
+      }
+    ]
+  },
+  "request": {
+    "start": "2026-11-18T11:15:00-05:00",
+    "services": [
+      {
+        "serviceId": "fringe-trim",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "available": true,
+      "resourceIds": ["noah"]
+    }
+  }
+}

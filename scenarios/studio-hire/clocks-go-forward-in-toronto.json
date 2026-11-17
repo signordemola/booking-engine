@@ -1,0 +1,81 @@
+{
+  "id": "clocks-go-forward-in-toronto",
+  "title": "On the day the clocks go forward in Toronto, 08:00 on the clock is 12:00 UTC, not 13:00",
+  "source": "https://www.iana.org/time-zones",
+  "business": "studio-hire",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2027-03-01T12:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "date": "2027-03-14",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 2,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "timeZone": "America/Toronto",
+      "slots": [
+        {
+          "localStart": "08:00",
+          "start": "2027-03-14T12:00:00Z"
+        },
+        {
+          "localStart": "09:00",
+          "start": "2027-03-14T13:00:00Z"
+        },
+        {
+          "localStart": "10:00",
+          "start": "2027-03-14T14:00:00Z"
+        },
+        {
+          "localStart": "11:00",
+          "start": "2027-03-14T15:00:00Z"
+        },
+        {
+          "localStart": "12:00",
+          "start": "2027-03-14T16:00:00Z"
+        },
+        {
+          "localStart": "13:00",
+          "start": "2027-03-14T17:00:00Z"
+        },
+        {
+          "localStart": "14:00",
+          "start": "2027-03-14T18:00:00Z"
+        },
+        {
+          "localStart": "15:00",
+          "start": "2027-03-14T19:00:00Z"
+        },
+        {
+          "localStart": "16:00",
+          "start": "2027-03-14T20:00:00Z"
+        },
+        {
+          "localStart": "17:00",
+          "start": "2027-03-14T21:00:00Z"
+        },
+        {
+          "localStart": "18:00",
+          "start": "2027-03-14T22:00:00Z"
+        },
+        {
+          "localStart": "19:00",
+          "start": "2027-03-14T23:00:00Z"
+        },
+        {
+          "localStart": "20:00",
+          "start": "2027-03-15T00:00:00Z"
+        }
+      ]
+    }
+  }
+}

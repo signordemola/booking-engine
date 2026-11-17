@@ -1,0 +1,52 @@
+{
+  "id": "balayage-fits-around-lunch",
+  "title": "A 3-hour balayage must fit before the lunch break or after it",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-10T15:00:00Z",
+    "busy": []
+  },
+  "request": {
+    "date": "2026-11-18",
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "durationMinutes": 180,
+      "slots": [
+        {
+          "localStart": "09:00",
+          "resourceIds": ["camille"]
+        },
+        {
+          "localStart": "13:00",
+          "resourceIds": ["camille"]
+        },
+        {
+          "localStart": "13:15",
+          "resourceIds": ["camille"]
+        },
+        {
+          "localStart": "13:30",
+          "resourceIds": ["camille"]
+        },
+        {
+          "localStart": "13:45",
+          "resourceIds": ["camille"]
+        },
+        {
+          "localStart": "14:00",
+          "resourceIds": ["camille"]
+        }
+      ]
+    }
+  }
+}
