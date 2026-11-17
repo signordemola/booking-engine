@@ -17,8 +17,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Done        |
 | 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Done        |
 | 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Done        |
-| 5     | Rules          | Only times at least 48 hours after the patch test                                 | Next        |
-| 6     | Policies       | "Non-refundable. Moves once."                                                     | Not started |
+| 5     | Rules          | Only times at least 48 hours after the patch test                                 | Done        |
+| 6     | Policies       | "Non-refundable. Moves once."                                                     | Next        |
 | 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Not started |
 | 8     | First products | An AI assistant books a lash appointment and obeys the patch test rule            | Not started |
 
@@ -72,15 +72,19 @@ Not built here: money rules for a cancellation (stage 6), and the Postgres store
 
 ### Stage 5: Rules
 
-- Patch test before the first booking, with a gap in hours.
-- Consultation before a service.
-- Consent form signed before payment.
+- Five rule kinds in the settings: `prerequisite`, `consent`, `book-alone`, `fill-window` and `new-client-deposit`.
+- Facts about the client: past visits, prerequisites done or booked, and consents signed.
+- Patch test before a service, with a waiting time in hours and a validity in days. The slot list only offers times that satisfy it.
+- Consultation before a service: the same rule kind, with no waiting time.
+- Consent form signed before the booking, by form version. The client can see times first.
 - A service that must be booked alone.
-- Fill or full set, by the date of the last visit.
-- A deposit that differs for new clients.
-- Staff: a stylist who offers the service, with a price for each stylist or level.
+- Fill or full set: a fill past its window is refused, and the answer names the full set.
+- A deposit rule for new clients.
+- Staff levels, with a price for each level.
 
-Done when: each "Built for" page on demolastudio.com has its promises as scenarios.
+Done: each promise on the lash, salon and studio hire pages of demolastudio.com runs as a scenario.
+
+Not built here: the photographer promises that are not rules of this kind (a newborn date held on the due date, a reschedule for weather). The reschedule limit is stage 6.
 
 ### Stage 6: Policies
 

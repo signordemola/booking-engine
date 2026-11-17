@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requestedServicesSchema } from "../quotes/quote-request-schema.js";
+import { clientFactsSchema } from "../rules/client-facts-schema.js";
 import { settingsSchema } from "../settings/parse-settings.js";
 import { isDateText, isInstantText } from "../time/time.js";
 
@@ -25,6 +26,7 @@ const busyTimeSchema = z.strictObject({
 export const slotFactsSchema = z.strictObject({
   now: instantSchema,
   busy: z.array(busyTimeSchema),
+  client: clientFactsSchema.optional(),
 });
 
 export const listSlotsInputSchema = z.strictObject({

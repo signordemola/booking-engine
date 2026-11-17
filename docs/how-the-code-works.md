@@ -103,6 +103,32 @@ One job: everything about dates, clock times and time zones. It is the only file
 - `localTimeToEpochMs("2027-03-14", "10:00", "America/Toronto")` answers "which exact moment is 10:00 on the clock in Toronto on that date?". It returns `null` for a clock time that does not exist, such as 02:30 on the night the clocks go forward.
 - `localDateOf` and `localTimeOf` go the other way: from an exact moment to the date and the clock time in a time zone.
 
+## Rules: `packages/core/src/rules/`
+
+The question: "does a rule of this business change this price, this time or this booking?".
+
+`client-facts-schema.ts`. The shape of what the platform tells the engine about a client: past visits, prerequisites done or booked (a patch test, a consultation), and consent forms signed.
+
+`apply-rules.ts`. One small function per rule kind. Each returns a list of findings; an empty list means the rule is satisfied.
+
+- `findBookAloneFindings`: a service that must be booked alone is in a booking with another service.
+- `findPrerequisiteFindings`: for a start time, is the prerequisite missing, too recent (inside the waiting hours) or out of date (past its valid days)?
+- `findFillWindowFindings`: is the last full set or fill more than the window before this time?
+- `findConsentFindings`: has the client signed the current version of the form?
+- `findNewClientDeposit`: the deposit rule for a client with no visits, if the business has one.
+
+Where each one is used:
+
+| Rule kind          | Quote                    | Slot list and slot check | Booking decision |
+| ------------------ | ------------------------ | ------------------------ | ---------------- |
+| Book-alone         | Refuses                  | Refuses                  | Refuses          |
+| Prerequisite       | -                        | Blocks times             | Blocks the time  |
+| Fill window        | Refuses, at the time now | Blocks times             | Blocks the time  |
+| Consent            | -                        | -                        | Refuses          |
+| New-client deposit | Sets the deposit         | -                        | Sets the deposit |
+
+A staff level is not a rule. It is a field on the resource, and a service can have a price for each level. The quote uses the level of the chosen resource.
+
 ## Slots: `packages/core/src/slots/`
 
 The question: "which start times are free?". Read the files in this order.
@@ -185,7 +211,7 @@ One job: the public API. Code outside the engine imports from here only. `index.
 Real cases as data files. This folder is its own small package, because it reads files from disk and the engine must not.
 
 - `businesses/*.json`: the settings of four demo businesses: a lash studio (US$, no tax), a Montreal salon (two taxes added), a Toronto studio hire (by the hour) and a UK photographer (VAT included).
-- `lash/`, `salon/`, `studio-hire/`, `photographer/`: one file per case. A case about time also has `facts`: the time now and the busy times. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
+- `lash/`, `salon/`, `studio-hire/`, `photographer/`: one file per case. A case about time also has `facts`: the time now and the busy times. A case about a rule also has facts about the client. Each file names a business, an operation, a request, and the answer it expects. `source` links to where the case comes from.
 - `scenario-schema.ts`: the shape of a scenario file.
 - `load-scenarios.ts`: reads every file and attaches the settings of its business.
 - `run-scenarios.test.ts`: one test that runs every scenario through `runOperation`. The expected answer only has to list the parts that matter; extra fields in the real answer are fine.

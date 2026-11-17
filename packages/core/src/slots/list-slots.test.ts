@@ -177,6 +177,17 @@ test("a day when nobody works has no start times, and the answer says why", () =
 });
 
 test("an add-on makes the booking longer, so fewer start times fit", () => {
+  const facts = {
+    now: tuesdayMorning,
+    busy: [],
+    client: {
+      visits: [],
+      prerequisites: [
+        { ruleId: "patch-test-for-lashes", at: "2026-11-10T15:00:00Z" },
+      ],
+      consents: [],
+    },
+  };
   const withoutBath = {
     date: "2026-11-21",
     services: [{ serviceId: "hybrid-full-set", addOns: [] }],
@@ -191,14 +202,10 @@ test("an add-on makes the booking longer, so fewer start times fit", () => {
     ],
   };
 
-  expect(listFor(lashStudio, noBusyTimes, withoutBath).durationMinutes).toBe(
-    150,
-  );
-  expect(localStartsOf(lashStudio, noBusyTimes, withoutBath).at(-1)).toBe(
-    "15:30",
-  );
-  expect(listFor(lashStudio, noBusyTimes, withBath).durationMinutes).toBe(165);
-  expect(localStartsOf(lashStudio, noBusyTimes, withBath).at(-1)).toBe("15:00");
+  expect(listFor(lashStudio, facts, withoutBath).durationMinutes).toBe(150);
+  expect(localStartsOf(lashStudio, facts, withoutBath).at(-1)).toBe("15:30");
+  expect(listFor(lashStudio, facts, withBath).durationMinutes).toBe(165);
+  expect(localStartsOf(lashStudio, facts, withBath).at(-1)).toBe("15:00");
 });
 
 test("with two stylists, each start time lists who is free", () => {

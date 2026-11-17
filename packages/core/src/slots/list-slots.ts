@@ -5,6 +5,7 @@ import {
   findBlockers,
   findDateBlockers,
   openRangesOn,
+  type Blocker,
 } from "./find-blockers.js";
 import { prepareSlotContext } from "./prepare-slot-context.js";
 import { listSlotsInputSchema } from "./slot-input-schema.js";
@@ -39,6 +40,7 @@ export const listSlots = (input: unknown): Result<SlotList> => {
   const { context, resources } = prepared.value;
   const stepMs = settings.schedule.slotStepMinutes * 60_000;
   const resourceIdsByStart = new Map<number, string[]>();
+  const ruleBlockers: Blocker[] = [];
   let anyoneWorks = false;
 
   resources.forEach((resource) => {
@@ -49,12 +51,16 @@ export const listSlots = (input: unknown): Result<SlotList> => {
         addMinutes(startMs, context.durationMinutes) <= range.endMs;
         startMs += stepMs
       ) {
-        if (findBlockers(context, resource, startMs).length === 0) {
+        const blockers = findBlockers(context, resource, startMs);
+        if (blockers.length === 0) {
           resourceIdsByStart.set(startMs, [
             ...(resourceIdsByStart.get(startMs) ?? []),
             resource.id,
           ]);
         }
+        ruleBlockers.push(
+          ...blockers.filter((blocker) => blocker.code.startsWith("rule.")),
+        );
       }
     });
   });
@@ -68,8 +74,15 @@ export const listSlots = (input: unknown): Result<SlotList> => {
       resourceIds,
     }));
 
+  const differentRuleBlockers = ruleBlockers.filter(
+    (blocker, index) =>
+      ruleBlockers.findIndex((other) => other.code === blocker.code) === index,
+  );
   const dayBlockers = anyoneWorks
-    ? findDateBlockers(context, request.date)
+    ? [
+        ...findDateBlockers(context, request.date),
+        ...(slots.length === 0 ? differentRuleBlockers : []),
+      ]
     : [
         {
           code: "slot.day-off",

@@ -1,6 +1,11 @@
 import type { Result } from "../lib/result.js";
 import { findRequestedItems } from "../quotes/find-requested-items.js";
 import type { QuoteRequest } from "../quotes/quote-request-schema.js";
+import {
+  findBookAloneFindings,
+  findFillWindowFindings,
+  findPrerequisiteFindings,
+} from "../rules/apply-rules.js";
 import type {
   BusinessSettings,
   Resource,
@@ -29,6 +34,18 @@ export const prepareSlotContext = (
     return requested;
   }
 
+  const serviceIds = requested.value.services.map(({ service }) => service.id);
+  const bookAloneFindings = findBookAloneFindings(settings, serviceIds);
+  if (bookAloneFindings.length > 0) {
+    return {
+      ok: false,
+      errors: bookAloneFindings.map((finding) => ({
+        ...finding,
+        path: "request.services",
+      })),
+    };
+  }
+
   const shape = findBookingShape(
     settings,
     requested.value.services,
@@ -48,6 +65,20 @@ export const prepareSlotContext = (
         durationMinutes: shape.value.durationMinutes,
         gaps: shape.value.gaps,
         busyTimes: groupBusyTimes(facts.busy),
+        findRuleBlockers: (startMs) => [
+          ...findPrerequisiteFindings(
+            settings,
+            serviceIds,
+            facts.client,
+            startMs,
+          ),
+          ...findFillWindowFindings(
+            settings,
+            serviceIds,
+            facts.client,
+            startMs,
+          ),
+        ],
       },
     },
   };

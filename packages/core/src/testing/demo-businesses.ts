@@ -36,6 +36,54 @@ export const lashStudio: BusinessSettings = {
       },
       addOnIds: [],
     },
+    {
+      id: "hybrid-fill",
+      name: "Hybrid fill",
+      price: {
+        kind: "fixed",
+        amountMinor: 6500,
+        durationMinutes: 75,
+      },
+      deposit: {
+        kind: "percentage",
+        percent: 25,
+      },
+      addOnIds: ["lash-bath"],
+    },
+    {
+      id: "patch-test",
+      name: "Patch test",
+      price: {
+        kind: "fixed",
+        amountMinor: 0,
+        durationMinutes: 15,
+      },
+      addOnIds: [],
+    },
+    {
+      id: "brow-consultation",
+      name: "Brow consultation",
+      price: {
+        kind: "fixed",
+        amountMinor: 0,
+        durationMinutes: 30,
+      },
+      addOnIds: [],
+    },
+    {
+      id: "ombre-brows",
+      name: "Ombre brows",
+      price: {
+        kind: "fixed",
+        amountMinor: 35000,
+        durationMinutes: 180,
+      },
+      deposit: {
+        kind: "fixed",
+        amountMinor: 10000,
+      },
+      addOnIds: [],
+    },
   ],
   addOns: [
     {
@@ -77,11 +125,19 @@ export const lashStudio: BusinessSettings = {
       afterMinutes: 15,
     },
   },
+  levels: [],
   resources: [
     {
       id: "nadia",
       name: "Nadia",
-      serviceIds: ["hybrid-full-set", "lash-removal"],
+      serviceIds: [
+        "hybrid-full-set",
+        "lash-removal",
+        "hybrid-fill",
+        "patch-test",
+        "brow-consultation",
+        "ombre-brows",
+      ],
       hours: {
         monday: [],
         tuesday: [
@@ -119,6 +175,43 @@ export const lashStudio: BusinessSettings = {
     },
   ],
   closures: [],
+  rules: [
+    {
+      kind: "prerequisite",
+      id: "patch-test-for-lashes",
+      name: "Patch test",
+      serviceIds: ["hybrid-full-set"],
+      minHoursBefore: 48,
+      validDays: 365,
+    },
+    {
+      kind: "fill-window",
+      id: "hybrid-fill-window",
+      fillServiceId: "hybrid-fill",
+      fullSetServiceId: "hybrid-full-set",
+      maxDays: 21,
+    },
+    {
+      kind: "prerequisite",
+      id: "consultation-for-brows",
+      name: "Brow consultation",
+      serviceIds: ["ombre-brows"],
+      minHoursBefore: 0,
+      validDays: 90,
+    },
+    {
+      kind: "consent",
+      id: "pmu-consent",
+      name: "PMU consent form",
+      serviceIds: ["ombre-brows"],
+      formVersion: "2026-01",
+    },
+    {
+      kind: "book-alone",
+      id: "tests-and-consultations-alone",
+      serviceIds: ["patch-test", "brow-consultation"],
+    },
+  ],
 };
 
 export const salon: BusinessSettings = {
@@ -154,6 +247,12 @@ export const salon: BusinessSettings = {
         kind: "fixed",
         amountMinor: 24000,
         durationMinutes: 180,
+        levelPrices: [
+          {
+            levelId: "senior",
+            amountMinor: 28000,
+          },
+        ],
       },
       addOnIds: ["bond-treatment"],
     },
@@ -191,10 +290,17 @@ export const salon: BusinessSettings = {
       afterMinutes: 10,
     },
   },
+  levels: [
+    {
+      id: "senior",
+      name: "Senior stylist",
+    },
+  ],
   resources: [
     {
       id: "camille",
       name: "Camille",
+      levelId: "senior",
       serviceIds: ["balayage", "fringe-trim"],
       hours: {
         monday: [],
@@ -292,6 +398,16 @@ export const salon: BusinessSettings = {
     },
   ],
   closures: [],
+  rules: [
+    {
+      kind: "new-client-deposit",
+      id: "new-client-deposit",
+      deposit: {
+        kind: "percentage",
+        percent: 50,
+      },
+    },
+  ],
 };
 
 export const hireStudio: BusinessSettings = {
@@ -354,6 +470,7 @@ export const hireStudio: BusinessSettings = {
       afterMinutes: 30,
     },
   },
+  levels: [],
   resources: [
     {
       id: "daylight-room",
@@ -412,6 +529,15 @@ export const hireStudio: BusinessSettings = {
       reason: "Christmas",
     },
   ],
+  rules: [
+    {
+      kind: "consent",
+      id: "hire-rules",
+      name: "Studio hire rules",
+      serviceIds: ["daylight-studio"],
+      formVersion: "2026-03",
+    },
+  ],
 };
 
 export const photographer: BusinessSettings = {
@@ -468,6 +594,7 @@ export const photographer: BusinessSettings = {
       afterMinutes: 30,
     },
   },
+  levels: [],
   resources: [
     {
       id: "clara",
@@ -515,4 +642,5 @@ export const photographer: BusinessSettings = {
     },
   ],
   closures: [],
+  rules: [],
 };

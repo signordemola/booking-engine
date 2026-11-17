@@ -1,0 +1,42 @@
+{
+  "id": "too-soon-after-the-patch-test",
+  "title": "The day after the patch test has no times for a full set, and the answer says why",
+  "source": "https://support.phorest.com/hc/en-us/articles/360016360879-How-do-I-set-up-a-patch-test-period-for-online-bookings",
+  "business": "lash-studio",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [
+        {
+          "ruleId": "patch-test-for-lashes",
+          "at": "2026-11-17T16:00:00Z"
+        }
+      ],
+      "consents": []
+    }
+  },
+  "request": {
+    "date": "2026-11-18",
+    "services": [
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "slots": [],
+      "reasons": [
+        {
+          "code": "rule.prerequisite-too-recent",
+          "message": "\"Hybrid full set\" must be at least 48 hours after this: Patch test."
+        }
+      ]
+    }
+  }
+}

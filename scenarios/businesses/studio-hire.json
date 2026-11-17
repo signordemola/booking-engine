@@ -58,6 +58,7 @@
       "afterMinutes": 30
     }
   },
+  "levels": [],
   "resources": [
     {
       "id": "daylight-room",
@@ -114,6 +115,15 @@
       "from": "2026-12-25",
       "to": "2026-12-26",
       "reason": "Christmas"
+    }
+  ],
+  "rules": [
+    {
+      "kind": "consent",
+      "id": "hire-rules",
+      "name": "Studio hire rules",
+      "serviceIds": ["daylight-studio"],
+      "formVersion": "2026-03"
     }
   ]
 }

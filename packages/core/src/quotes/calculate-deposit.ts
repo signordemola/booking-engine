@@ -1,4 +1,6 @@
 import { percentageOf } from "../money/money.js";
+import { findNewClientDeposit } from "../rules/apply-rules.js";
+import type { ClientFacts } from "../rules/client-facts-schema.js";
 import type {
   BusinessSettings,
   DepositRule,
@@ -6,7 +8,7 @@ import type {
 import type { RequestedService } from "./find-requested-items.js";
 
 export type AppliedDeposit = {
-  source: "service" | "default";
+  source: "new-client" | "service" | "default";
   rule: DepositRule;
   amountMinor: number;
 };
@@ -27,7 +29,7 @@ const depositAmount = (
     case "percentage":
       return percentageOf(requested.priceMinor, rule.percent);
     case "fixed":
-      return rule.amountMinor;
+      return Math.min(rule.amountMinor, requested.priceMinor);
     case "full":
       return requested.priceMinor + addOnsTotalOf(requested);
   }
@@ -36,15 +38,14 @@ const depositAmount = (
 export const calculateDeposit = (
   settings: BusinessSettings,
   requested: RequestedService,
+  client: ClientFacts | undefined,
 ): AppliedDeposit => {
+  const newClientRule = findNewClientDeposit(settings, client);
   const ownRule = requested.service.deposit;
-  const rule = ownRule ?? settings.defaultDeposit;
+  const rule = newClientRule ?? ownRule ?? settings.defaultDeposit;
+  const source = newClientRule ? "new-client" : ownRule ? "service" : "default";
 
-  return {
-    source: ownRule ? "service" : "default",
-    rule,
-    amountMinor: depositAmount(rule, requested),
-  };
+  return { source, rule, amountMinor: depositAmount(rule, requested) };
 };
 
 export const describeDepositRule = (rule: DepositRule): string => {

@@ -15,8 +15,8 @@ This project is at the start. **You cannot take a booking with it yet.** It can 
 | Money: add-ons, deposit, tax, fees, balance                       | Done        |
 | Time: hours, breaks, closures, gaps, lead time, clock changes     | Done        |
 | Bookings: no overlap, hold during payment, safe retries           | Done        |
-| Rules: patch test, consultation, consent, fill or full set, staff | Next        |
-| Policies: cancellation, refund, reschedule                        | Not started |
+| Rules: patch test, consultation, consent, fill or full set, staff | Done        |
+| Policies: cancellation, refund, reschedule                        | Next        |
 | Follow-ups: reminders, balance links, hold expiry                 | Not started |
 | First products: tools for AI agents, scenario pages               | Not started |
 
@@ -29,6 +29,7 @@ What works today:
 - `listSlots` lists the free start times on a date, for one or more staff or rooms. It applies opening hours, lunch breaks, closures, the length of the booking, gaps between bookings, the notice a booking needs and the busy times. `checkSlot` says if one time is free, and why not.
 - Time zones are handled with the built-in `Temporal` API, with tests for the days when the clocks change in Toronto and in London.
 - `decideBooking` decides a booking: it checks the time, prices it and returns the record to save. A booking with money due today is held, and it is confirmed when the deposit is paid. `applyBookingAction` moves a booking between statuses.
+- Booking rules are settings: a patch test or a consultation that must come first (with a waiting time and a validity), a consent form signed before the booking, services that must be booked alone, a fill window after a full set, a deposit rule for new clients, and a price for each staff level. The slot list only offers times that satisfy the rules, and says why a day is empty.
 - `packages/store` saves bookings safely. A test sends 20 requests for the same time at the same moment, and exactly 1 gets it. A retry with the same booking id makes no second booking. A time a client picks is held for the minutes the owner sets, and it is free again the moment the hold runs out. It has an in-memory store; a Postgres store comes later.
 - Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 

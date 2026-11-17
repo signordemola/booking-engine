@@ -57,10 +57,16 @@ const dateSchema = z
   .string({ error: dateMessage })
   .refine(isDateText, { error: dateMessage });
 
+const levelPriceSchema = z.strictObject({
+  levelId: idSchema,
+  amountMinor: amountMinorSchema,
+});
+
 const fixedPriceSchema = z.strictObject({
   kind: z.literal("fixed"),
   amountMinor: amountMinorSchema,
   durationMinutes: wholeNumberSchema,
+  levelPrices: z.array(levelPriceSchema).optional(),
 });
 const hourlyPriceSchema = z.strictObject({
   kind: z.literal("hourly"),
@@ -171,9 +177,12 @@ const weeklyHoursSchema = z.strictObject({
   sunday: openWindowsSchema,
 });
 
+const levelSchema = z.strictObject({ id: idSchema, name: nameSchema });
+
 const resourceSchema = z.strictObject({
   id: idSchema,
   name: nameSchema,
+  levelId: idSchema.optional(),
   serviceIds: z.array(idSchema),
   hours: weeklyHoursSchema,
 });
@@ -183,6 +192,53 @@ const closureSchema = z.strictObject({
   to: dateSchema,
   reason: nameSchema,
 });
+
+const ruleKindMessage =
+  "Choose a rule kind: prerequisite, consent, book-alone, fill-window or new-client-deposit.";
+
+const prerequisiteRuleSchema = z.strictObject({
+  kind: z.literal("prerequisite"),
+  id: idSchema,
+  name: nameSchema,
+  serviceIds: z.array(idSchema),
+  minHoursBefore: minutesSchema,
+  validDays: wholeNumberSchema,
+});
+const consentRuleSchema = z.strictObject({
+  kind: z.literal("consent"),
+  id: idSchema,
+  name: nameSchema,
+  serviceIds: z.array(idSchema),
+  formVersion: nameSchema,
+});
+const bookAloneRuleSchema = z.strictObject({
+  kind: z.literal("book-alone"),
+  id: idSchema,
+  serviceIds: z.array(idSchema),
+});
+const fillWindowRuleSchema = z.strictObject({
+  kind: z.literal("fill-window"),
+  id: idSchema,
+  fillServiceId: idSchema,
+  fullSetServiceId: idSchema,
+  maxDays: wholeNumberSchema,
+});
+const newClientDepositRuleSchema = z.strictObject({
+  kind: z.literal("new-client-deposit"),
+  id: idSchema,
+  deposit: depositRuleSchema,
+});
+const ruleSchema = z.discriminatedUnion(
+  "kind",
+  [
+    prerequisiteRuleSchema,
+    consentRuleSchema,
+    bookAloneRuleSchema,
+    fillWindowRuleSchema,
+    newClientDepositRuleSchema,
+  ],
+  { error: ruleKindMessage },
+);
 
 const scheduleSchema = z.strictObject({
   slotStepMinutes: wholeNumberSchema,
@@ -205,8 +261,10 @@ export const settingsShapeSchema = z.strictObject({
   addOns: z.array(addOnSchema),
   fees: z.array(feeSchema),
   schedule: scheduleSchema,
+  levels: z.array(levelSchema),
   resources: z.array(resourceSchema),
   closures: z.array(closureSchema),
+  rules: z.array(ruleSchema),
 });
 
 export { weekdays };
@@ -222,4 +280,9 @@ export type Gaps = z.infer<typeof gapsSchema>;
 export type OpenWindow = z.infer<typeof openWindowSchema>;
 export type Resource = z.infer<typeof resourceSchema>;
 export type Closure = z.infer<typeof closureSchema>;
+export type Level = z.infer<typeof levelSchema>;
+export type Rule = z.infer<typeof ruleSchema>;
+export type PrerequisiteRule = z.infer<typeof prerequisiteRuleSchema>;
+export type ConsentRule = z.infer<typeof consentRuleSchema>;
+export type FillWindowRule = z.infer<typeof fillWindowRuleSchema>;
 export type BusinessSettings = z.infer<typeof settingsShapeSchema>;

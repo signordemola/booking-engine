@@ -1,0 +1,35 @@
+{
+  "id": "returning-client-pays-the-usual-deposit",
+  "title": "A returning client pays the usual 25% deposit on a balayage",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "quote.create",
+  "facts": {
+    "client": {
+      "visits": [
+        {
+          "serviceId": "fringe-trim",
+          "at": "2026-09-01T15:00:00Z"
+        }
+      ],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "dueToday": {
+        "depositMinor": 6000
+      }
+    }
+  }
+}

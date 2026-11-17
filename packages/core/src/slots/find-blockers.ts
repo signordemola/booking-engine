@@ -20,6 +20,7 @@ export type SlotContext = {
   durationMinutes: number;
   gaps: Gaps;
   busyTimes: BusyTimes;
+  findRuleBlockers: (startMs: number) => Blocker[];
 };
 
 const describeMinutes = (minutes: number): string => {
@@ -118,6 +119,8 @@ export const findBlockers = (
       message: "This time is already taken.",
     });
   }
+
+  blockers.push(...context.findRuleBlockers(startMs));
 
   return blockers;
 };

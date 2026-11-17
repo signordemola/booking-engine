@@ -33,6 +33,54 @@
         "durationMinutes": 30
       },
       "addOnIds": []
+    },
+    {
+      "id": "hybrid-fill",
+      "name": "Hybrid fill",
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 6500,
+        "durationMinutes": 75
+      },
+      "deposit": {
+        "kind": "percentage",
+        "percent": 25
+      },
+      "addOnIds": ["lash-bath"]
+    },
+    {
+      "id": "patch-test",
+      "name": "Patch test",
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 0,
+        "durationMinutes": 15
+      },
+      "addOnIds": []
+    },
+    {
+      "id": "brow-consultation",
+      "name": "Brow consultation",
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 0,
+        "durationMinutes": 30
+      },
+      "addOnIds": []
+    },
+    {
+      "id": "ombre-brows",
+      "name": "Ombre brows",
+      "price": {
+        "kind": "fixed",
+        "amountMinor": 35000,
+        "durationMinutes": 180
+      },
+      "deposit": {
+        "kind": "fixed",
+        "amountMinor": 10000
+      },
+      "addOnIds": []
     }
   ],
   "addOns": [
@@ -75,11 +123,19 @@
       "afterMinutes": 15
     }
   },
+  "levels": [],
   "resources": [
     {
       "id": "nadia",
       "name": "Nadia",
-      "serviceIds": ["hybrid-full-set", "lash-removal"],
+      "serviceIds": [
+        "hybrid-full-set",
+        "lash-removal",
+        "hybrid-fill",
+        "patch-test",
+        "brow-consultation",
+        "ombre-brows"
+      ],
       "hours": {
         "monday": [],
         "tuesday": [
@@ -116,5 +172,42 @@
       }
     }
   ],
-  "closures": []
+  "closures": [],
+  "rules": [
+    {
+      "kind": "prerequisite",
+      "id": "patch-test-for-lashes",
+      "name": "Patch test",
+      "serviceIds": ["hybrid-full-set"],
+      "minHoursBefore": 48,
+      "validDays": 365
+    },
+    {
+      "kind": "fill-window",
+      "id": "hybrid-fill-window",
+      "fillServiceId": "hybrid-fill",
+      "fullSetServiceId": "hybrid-full-set",
+      "maxDays": 21
+    },
+    {
+      "kind": "prerequisite",
+      "id": "consultation-for-brows",
+      "name": "Brow consultation",
+      "serviceIds": ["ombre-brows"],
+      "minHoursBefore": 0,
+      "validDays": 90
+    },
+    {
+      "kind": "consent",
+      "id": "pmu-consent",
+      "name": "PMU consent form",
+      "serviceIds": ["ombre-brows"],
+      "formVersion": "2026-01"
+    },
+    {
+      "kind": "book-alone",
+      "id": "tests-and-consultations-alone",
+      "serviceIds": ["patch-test", "brow-consultation"]
+    }
+  ]
 }

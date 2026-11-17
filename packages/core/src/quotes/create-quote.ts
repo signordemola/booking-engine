@@ -1,6 +1,12 @@
 import { z } from "zod";
 import type { Reason, Result } from "../lib/result.js";
 import { toProblems } from "../lib/zod-problems.js";
+import {
+  findBookAloneFindings,
+  findFillWindowFindings,
+} from "../rules/apply-rules.js";
+import { clientFactsSchema } from "../rules/client-facts-schema.js";
+import { isInstantText, toEpochMs } from "../time/time.js";
 import { settingsSchema } from "../settings/parse-settings.js";
 import { calculateDeposit, describeDepositRule } from "./calculate-deposit.js";
 import { calculateTax, describeTax, type TaxLine } from "./calculate-tax.js";
@@ -36,8 +42,26 @@ export type Quote = {
 const sumOf = (amounts: number[]) =>
   amounts.reduce((sum, amount) => sum + amount, 0);
 
+const depositReasons = {
+  "new-client": {
+    code: "deposit.new-client-rule",
+    text: "uses the deposit rule for new clients",
+  },
+  service: { code: "deposit.service-rule", text: "has its own deposit rule" },
+  default: {
+    code: "deposit.default-rule",
+    text: "uses the business deposit rule",
+  },
+};
+
 export const createQuoteInputSchema = z.strictObject({
   settings: settingsSchema,
+  facts: z
+    .strictObject({
+      now: z.string().refine(isInstantText).optional(),
+      client: clientFactsSchema.optional(),
+    })
+    .optional(),
   request: quoteRequestSchema,
 });
 
@@ -47,29 +71,46 @@ export const createQuote = (input: unknown): Result<Quote> => {
     return { ok: false, errors: toProblems(parsed.error.issues) };
   }
 
-  const { settings, request } = parsed.data;
+  const { settings, facts, request } = parsed.data;
   const requested = findRequestedItems(settings, request);
   if (!requested.ok) {
     return requested;
+  }
+
+  const serviceIds = requested.value.services.map(({ service }) => service.id);
+  const ruleFindings = [
+    ...findBookAloneFindings(settings, serviceIds),
+    ...(facts?.now === undefined
+      ? []
+      : findFillWindowFindings(
+          settings,
+          serviceIds,
+          facts.client,
+          toEpochMs(facts.now),
+        )),
+  ];
+  if (ruleFindings.length > 0) {
+    return {
+      ok: false,
+      errors: ruleFindings.map((finding) => ({
+        ...finding,
+        path: "request.services",
+      })),
+    };
   }
 
   const lineItems: LineItem[] = [];
   const reasons: Reason[] = [];
 
   requested.value.services.forEach((requestedService) => {
-    const deposit = calculateDeposit(settings, requestedService);
+    const deposit = calculateDeposit(settings, requestedService, facts?.client);
     const { service, addOns } = requestedService;
+    const reason = depositReasons[deposit.source];
 
     reasons.push({
-      code:
-        deposit.source === "service"
-          ? "deposit.service-rule"
-          : "deposit.default-rule",
+      code: reason.code,
       path: `lineItems[${lineItems.length}]`,
-      message:
-        deposit.source === "service"
-          ? `"${service.name}" has its own deposit rule: ${describeDepositRule(deposit.rule)}.`
-          : `"${service.name}" uses the business deposit rule: ${describeDepositRule(deposit.rule)}.`,
+      message: `"${service.name}" ${reason.text}: ${describeDepositRule(deposit.rule)}.`,
     });
     lineItems.push(toServiceLineItem(requestedService, deposit.amountMinor));
     lineItems.push(

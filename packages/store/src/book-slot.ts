@@ -4,6 +4,7 @@ import {
   type BookingEvent,
   type BookingRequest,
   type BusinessSettings,
+  type ClientFacts,
   type Result,
 } from "@booking-engine/core";
 import type { BookingStore } from "./booking-store.js";
@@ -18,6 +19,7 @@ type BookSlotInput = {
   store: BookingStore;
   settings: BusinessSettings;
   now: string;
+  client?: ClientFacts;
   request: BookingRequest;
 };
 
@@ -25,6 +27,7 @@ export const bookSlot = async ({
   store,
   settings,
   now,
+  client,
   request,
 }: BookSlotInput): Promise<Result<BookedSlot>> => {
   const earlier = await store.findBooking(
@@ -40,7 +43,11 @@ export const bookSlot = async ({
 
   await store.expireHolds(settings.businessId, now);
   const busy = await store.findBusyTimes(settings.businessId);
-  const decision = decideBooking({ settings, facts: { now, busy }, request });
+  const decision = decideBooking({
+    settings,
+    facts: { now, busy, client },
+    request,
+  });
   if (!decision.ok) {
     return decision;
   }

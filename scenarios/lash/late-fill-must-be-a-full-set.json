@@ -1,0 +1,37 @@
+{
+  "id": "late-fill-must-be-a-full-set",
+  "title": "Four weeks after a full set, a fill is refused: the visit must be booked as a full set",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "client": {
+      "visits": [
+        {
+          "serviceId": "hybrid-full-set",
+          "at": "2026-10-20T15:00:00Z"
+        }
+      ],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "services": [
+      {
+        "serviceId": "hybrid-fill",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "rule.fill-window-passed",
+        "message": "\"Hybrid fill\" is for visits within 21 days of the last one. Book \"Hybrid full set\" instead."
+      }
+    ]
+  }
+}

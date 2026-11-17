@@ -1,0 +1,37 @@
+{
+  "id": "fill-inside-the-window",
+  "title": "Two weeks after a full set, the client books a fill at the fill price",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "client": {
+      "visits": [
+        {
+          "serviceId": "hybrid-full-set",
+          "at": "2026-11-03T15:00:00Z"
+        }
+      ],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "services": [
+      {
+        "serviceId": "hybrid-fill",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "totalMinor": 6500,
+      "dueToday": {
+        "depositMinor": 1625
+      }
+    }
+  }
+}

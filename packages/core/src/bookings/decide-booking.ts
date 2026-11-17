@@ -1,6 +1,7 @@
 import type { Problem, Result } from "../lib/result.js";
 import { toProblems } from "../lib/zod-problems.js";
 import { createQuote, type Quote } from "../quotes/create-quote.js";
+import { findConsentFindings } from "../rules/apply-rules.js";
 import { findBlockers } from "../slots/find-blockers.js";
 import { prepareSlotContext } from "../slots/prepare-slot-context.js";
 import { addMinutes, toEpochMs, toInstantText } from "../time/time.js";
@@ -49,9 +50,30 @@ export const decideBooking = (input: unknown): Result<BookingDecision> => {
     return { ok: false, errors };
   }
 
+  const serviceIds = request.services.map((service) => service.serviceId);
+  const consentFindings = findConsentFindings(
+    settings,
+    serviceIds,
+    facts.client,
+  );
+  if (consentFindings.length > 0) {
+    return {
+      ok: false,
+      errors: consentFindings.map((finding) => ({
+        ...finding,
+        path: "request.services",
+      })),
+    };
+  }
+
   const quote = createQuote({
     settings,
-    request: { services: request.services, feeIds: request.feeIds },
+    facts: { client: facts.client },
+    request: {
+      services: request.services,
+      feeIds: request.feeIds,
+      resourceId: freeResource.id,
+    },
   });
   if (!quote.ok) {
     return quote;

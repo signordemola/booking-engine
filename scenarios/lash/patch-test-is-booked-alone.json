@@ -1,0 +1,28 @@
+{
+  "id": "patch-test-is-booked-alone",
+  "title": "A patch test cannot be put in the same booking as the full set",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "patch-test",
+        "addOns": []
+      },
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "rule.book-alone",
+        "message": "\"Patch test\" must be booked on its own."
+      }
+    ]
+  }
+}
