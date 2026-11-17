@@ -55,6 +55,35 @@ test.each([
   expect(parseSettings(input).ok).toBe(true);
 });
 
+test.each([
+  { kind: "none" },
+  {
+    kind: "added",
+    rates: [{ id: "hst", name: "HST", percent: 13 }],
+    timing: "with-balance",
+  },
+  {
+    kind: "included",
+    rates: [{ id: "vat", name: "VAT", percent: 20 }],
+    timing: "with-each-payment",
+  },
+])("accepts the tax kind $kind", (tax) => {
+  expect(parseSettings({ ...lashByNadia, tax }).ok).toBe(true);
+});
+
+test("accepts a service priced by the hour", () => {
+  const input = {
+    ...lashByNadia,
+    services: [
+      {
+        ...lashRemoval,
+        price: { kind: "hourly", hourlyMinor: 8500, minHours: 2, maxHours: 8 },
+      },
+    ],
+  };
+  expect(parseSettings(input).ok).toBe(true);
+});
+
 test("accepts a free service", () => {
   const input = {
     ...lashByNadia,
@@ -205,6 +234,135 @@ test.each([
     path: "addOns[1].id",
     message:
       'The id "lash-bath" is used more than once. Each id must be different.',
+  },
+  {
+    problem: "a price kind that does not exist",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      services: [
+        { ...hybridFullSet, price: { kind: "per-day", amountMinor: 12000 } },
+      ],
+    },
+    path: "services[0].price.kind",
+    message: "Choose a price kind: fixed or hourly.",
+  },
+  {
+    problem: "minimum hours above the maximum hours",
+    code: "settings.hours-range",
+    input: {
+      ...lashByNadia,
+      services: [
+        {
+          ...lashRemoval,
+          name: "Daylight studio",
+          price: {
+            kind: "hourly",
+            hourlyMinor: 8500,
+            minHours: 4,
+            maxHours: 2,
+          },
+        },
+      ],
+    },
+    path: "services[0].price",
+    message:
+      'The minimum hours of "Daylight studio" are more than its maximum hours.',
+  },
+  {
+    problem: "a fixed deposit above the lowest price of an hourly service",
+    code: "settings.fixed-deposit-above-price",
+    input: {
+      ...lashByNadia,
+      services: [
+        {
+          ...lashRemoval,
+          name: "Daylight studio",
+          price: {
+            kind: "hourly",
+            hourlyMinor: 8500,
+            minHours: 2,
+            maxHours: 8,
+          },
+          deposit: { kind: "fixed", amountMinor: 17001 },
+        },
+      ],
+    },
+    path: "services[0].deposit",
+    message: 'The fixed deposit of "Daylight studio" is more than its price.',
+  },
+  {
+    problem: "a fee with no clear due time",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      fees: [
+        {
+          id: "home-visit",
+          name: "Home visit",
+          amountMinor: 2000,
+          due: "tomorrow",
+        },
+      ],
+    },
+    path: "fees[0].due",
+    message: "Choose when the fee is due: today or later.",
+  },
+  {
+    problem: "two fees with the same id",
+    code: "settings.repeated-id",
+    input: { ...lashByNadia, fees: [...lashByNadia.fees, ...lashByNadia.fees] },
+    path: "fees[1].id",
+    message:
+      'The id "home-visit" is used more than once. Each id must be different.',
+  },
+  {
+    problem: "a tax kind that does not exist",
+    code: "input.invalid",
+    input: { ...lashByNadia, tax: { kind: "sometimes" } },
+    path: "tax.kind",
+    message: "Choose a tax kind: none, added or included.",
+  },
+  {
+    problem: "added tax with no rate",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      tax: { kind: "added", rates: [], timing: "with-each-payment" },
+    },
+    path: "tax.rates",
+    message: "Add at least one tax rate.",
+  },
+  {
+    problem: "tax with no clear timing",
+    code: "input.invalid",
+    input: {
+      ...lashByNadia,
+      tax: {
+        kind: "included",
+        rates: [{ id: "vat", name: "VAT", percent: 20 }],
+        timing: "never",
+      },
+    },
+    path: "tax.timing",
+    message: "Choose when tax is paid: with-each-payment or with-balance.",
+  },
+  {
+    problem: "two tax rates with the same id",
+    code: "settings.repeated-id",
+    input: {
+      ...lashByNadia,
+      tax: {
+        kind: "added",
+        rates: [
+          { id: "gst", name: "GST", percent: 5 },
+          { id: "gst", name: "QST", percent: 9.975 },
+        ],
+        timing: "with-each-payment",
+      },
+    },
+    path: "tax.rates[1].id",
+    message: 'The id "gst" is used more than once. Each id must be different.',
   },
 ])("rejects $problem", ({ input, code, path, message }) => {
   expect(errorsFor(input)).toEqual([{ code, path, message }]);
