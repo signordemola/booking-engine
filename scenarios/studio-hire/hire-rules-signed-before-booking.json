@@ -1,0 +1,37 @@
+{
+  "id": "hire-rules-signed-before-booking",
+  "title": "A hirer must sign the studio hire rules before the hire is booked",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "bookingId": "booking-3001",
+    "clientId": "client-priya",
+    "start": "2026-11-21T10:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 4,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "rule.consent-required",
+        "message": "Sign this before you book \"Daylight studio\": Studio hire rules."
+      }
+    ]
+  }
+}

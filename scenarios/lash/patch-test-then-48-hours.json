@@ -1,0 +1,67 @@
+{
+  "id": "patch-test-then-48-hours",
+  "title": "After a patch test on Tuesday at 11:00, a full set can start from Thursday at 11:00",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [
+        {
+          "ruleId": "patch-test-for-lashes",
+          "at": "2026-11-17T16:00:00Z"
+        }
+      ],
+      "consents": []
+    }
+  },
+  "request": {
+    "date": "2026-11-19",
+    "services": [
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "slots": [
+        {
+          "localStart": "11:00"
+        },
+        {
+          "localStart": "11:30"
+        },
+        {
+          "localStart": "12:00"
+        },
+        {
+          "localStart": "12:30"
+        },
+        {
+          "localStart": "13:00"
+        },
+        {
+          "localStart": "13:30"
+        },
+        {
+          "localStart": "14:00"
+        },
+        {
+          "localStart": "14:30"
+        },
+        {
+          "localStart": "15:00"
+        },
+        {
+          "localStart": "15:30"
+        }
+      ]
+    }
+  }
+}

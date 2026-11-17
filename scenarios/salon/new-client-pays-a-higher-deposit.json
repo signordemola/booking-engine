@@ -1,0 +1,41 @@
+{
+  "id": "new-client-pays-a-higher-deposit",
+  "title": "A new client pays a 50% deposit on a balayage; the usual deposit is 25%",
+  "source": "https://www.fresha.com/help-center/knowledge-base/payments/615-set-up-payment-policies",
+  "business": "salon",
+  "operation": "quote.create",
+  "facts": {
+    "client": {
+      "visits": [],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "dueToday": {
+        "depositMinor": 12000
+      },
+      "reasons": [
+        {
+          "code": "deposit.new-client-rule"
+        },
+        {
+          "code": "tax.added"
+        },
+        {
+          "code": "tax.with-each-payment"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "consent-signed-then-deposit",
+  "title": "With the consultation done and the consent signed, ombre brows are held for the US$100 deposit",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [
+        {
+          "ruleId": "consultation-for-brows",
+          "at": "2026-11-14T16:00:00Z"
+        }
+      ],
+      "consents": [
+        {
+          "ruleId": "pmu-consent",
+          "formVersion": "2026-01",
+          "signedAt": "2026-11-17T14:55:00Z"
+        }
+      ]
+    }
+  },
+  "request": {
+    "bookingId": "booking-5001",
+    "clientId": "client-sofia",
+    "start": "2026-11-20T10:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "ombre-brows",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "status": "pending",
+        "totalMinor": 35000,
+        "dueTodayMinor": 10000
+      },
+      "events": [
+        {
+          "type": "booking.held"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "consent-before-payment",
+  "title": "Ombre brows cannot be booked, so cannot be paid, before the consent form is signed",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [
+        {
+          "ruleId": "consultation-for-brows",
+          "at": "2026-11-14T16:00:00Z"
+        }
+      ],
+      "consents": []
+    }
+  },
+  "request": {
+    "bookingId": "booking-5001",
+    "clientId": "client-sofia",
+    "start": "2026-11-20T10:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "ombre-brows",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "rule.consent-required",
+        "message": "Sign this before you book \"Ombre brows\": PMU consent form."
+      }
+    ]
+  }
+}

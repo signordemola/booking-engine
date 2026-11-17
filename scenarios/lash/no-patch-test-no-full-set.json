@@ -1,0 +1,37 @@
+{
+  "id": "no-patch-test-no-full-set",
+  "title": "A client with no patch test cannot book a full set",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "slots.check",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "start": "2026-11-21T10:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "hybrid-full-set",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "available": false,
+      "reasons": [
+        {
+          "code": "rule.prerequisite-missing",
+          "message": "\"Hybrid full set\" needs this first: Patch test."
+        }
+      ]
+    }
+  }
+}

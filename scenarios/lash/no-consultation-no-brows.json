@@ -1,0 +1,37 @@
+{
+  "id": "no-consultation-no-brows",
+  "title": "Ombre brows have no times for a client who has not had the consultation",
+  "source": "https://www.demolastudio.com/for/lash-brow-pmu",
+  "business": "lash-studio",
+  "operation": "slots.list",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [],
+      "consents": []
+    }
+  },
+  "request": {
+    "date": "2026-11-20",
+    "services": [
+      {
+        "serviceId": "ombre-brows",
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "slots": [],
+      "reasons": [
+        {
+          "code": "rule.prerequisite-missing",
+          "message": "\"Ombre brows\" needs this first: Brow consultation."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "senior-stylist-costs-more",
+  "title": "A balayage with the senior stylist costs CA$280, not CA$240",
+  "source": "https://www.demolastudio.com/for/salons",
+  "business": "salon",
+  "operation": "quote.create",
+  "request": {
+    "services": [
+      {
+        "serviceId": "balayage",
+        "addOns": []
+      }
+    ],
+    "resourceId": "camille"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "subtotalMinor": 28000,
+      "lineItems": [
+        {
+          "name": "Balayage",
+          "amountMinor": 28000
+        }
+      ]
+    }
+  }
+}

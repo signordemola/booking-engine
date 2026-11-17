@@ -1,0 +1,46 @@
+{
+  "id": "hire-rules-signed-then-held",
+  "title": "With the hire rules signed, a 4-hour hire is held for the deposit",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [],
+    "client": {
+      "visits": [],
+      "prerequisites": [],
+      "consents": [
+        {
+          "ruleId": "hire-rules",
+          "formVersion": "2026-03",
+          "signedAt": "2026-11-17T14:50:00Z"
+        }
+      ]
+    }
+  },
+  "request": {
+    "bookingId": "booking-3001",
+    "clientId": "client-priya",
+    "start": "2026-11-21T10:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 4,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "status": "pending",
+        "end": "2026-11-21T19:00:00Z",
+        "blockedEnd": "2026-11-21T19:30:00Z",
+        "totalMinor": 38420,
+        "dueTodayMinor": 17000
+      }
+    }
+  }
+}
