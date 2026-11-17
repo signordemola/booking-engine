@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { photographer, salon } from "../testing/demo-businesses.js";
 import { applyBookingAction } from "./apply-booking-action.js";
 import {
+  isHoldOver,
   occupiesSlot,
   type Booking,
   type BookingStatus,
@@ -225,3 +226,23 @@ test.each([
     expect(occupiesSlot(status)).toBe(occupies);
   },
 );
+
+test.each([
+  { now: "2026-11-17T10:29:59Z", over: false, why: "one second is left" },
+  { now: "2026-11-17T10:30:00Z", over: true, why: "the time is up" },
+  { now: "2026-11-17T11:00:00Z", over: true, why: "the time passed long ago" },
+])(
+  "a hold until 10:30 is over at $now: $over, because $why",
+  ({ now, over }) => {
+    expect(isHoldOver(heldBooking, now)).toBe(over);
+  },
+);
+
+test("only a pending booking has a hold that can run out", () => {
+  expect(isHoldOver(withStatus("confirmed"), "2026-11-19T10:00:00Z")).toBe(
+    false,
+  );
+  expect(isHoldOver(withStatus("cancelled"), "2026-11-19T10:00:00Z")).toBe(
+    false,
+  );
+});

@@ -160,7 +160,11 @@ Saving is a separate package, because the engine must stay pure.
 
 Each business has its own `Map`, so one business can never read another's bookings.
 
-`book-slot.ts`. The workflow `bookSlot`: look for an earlier booking with the same id, read the busy times, ask the engine to decide, then save. If the store says the time was taken a moment ago, the client gets `booking.slot-taken`.
+`expireHolds` marks every pending booking whose hold is over as `expired`. `findBusyTimes` can leave out one booking: the one the asking client holds.
+
+`book-slot.ts`. The workflow `bookSlot`: look for an earlier booking with the same id, release the holds that ran out, read the busy times, ask the engine to decide, then save. If the store says the time was taken a moment ago, the client gets `booking.slot-taken`.
+
+`find-free-slots.ts`. The workflow `findFreeSlots`: release the holds that ran out, read the busy times (without the client's own hold), then ask the engine for the slot list.
 
 `change-booking.ts`. The workflow `changeBooking`: load the booking, ask the engine to apply the action, then save with the status it read.
 

@@ -29,7 +29,7 @@ What works today:
 - `listSlots` lists the free start times on a date, for one or more staff or rooms. It applies opening hours, lunch breaks, closures, the length of the booking, gaps between bookings, the notice a booking needs and the busy times. `checkSlot` says if one time is free, and why not.
 - Time zones are handled with the built-in `Temporal` API, with tests for the days when the clocks change in Toronto and in London.
 - `decideBooking` decides a booking: it checks the time, prices it and returns the record to save. A booking with money due today is held, and it is confirmed when the deposit is paid. `applyBookingAction` moves a booking between statuses.
-- `packages/store` saves bookings safely. A test sends 20 requests for the same time at the same moment, and exactly 1 gets it. A retry with the same booking id makes no second booking. It has an in-memory store; a Postgres store comes later.
+- `packages/store` saves bookings safely. A test sends 20 requests for the same time at the same moment, and exactly 1 gets it. A retry with the same booking id makes no second booking. A time a client picks is held for the minutes the owner sets, and it is free again the moment the hold runs out. It has an in-memory store; a Postgres store comes later.
 - Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 
 [PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.

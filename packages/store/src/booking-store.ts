@@ -8,7 +8,11 @@ export type SaveNewResult =
 export type SaveChangeResult = { kind: "saved" } | { kind: "conflict" };
 
 export interface BookingStore {
-  findBusyTimes(businessId: string): Promise<BusyTime[]>;
+  findBusyTimes(
+    businessId: string,
+    exceptBookingId?: string,
+  ): Promise<BusyTime[]>;
+  expireHolds(businessId: string, now: string): Promise<Booking[]>;
   findBooking(
     businessId: string,
     bookingId: string,
