@@ -30,7 +30,13 @@
       "price": {
         "kind": "fixed",
         "amountMinor": 24000,
-        "durationMinutes": 180
+        "durationMinutes": 180,
+        "levelPrices": [
+          {
+            "levelId": "senior",
+            "amountMinor": 28000
+          }
+        ]
       },
       "addOnIds": ["bond-treatment"]
     },
@@ -68,10 +74,17 @@
       "afterMinutes": 10
     }
   },
+  "levels": [
+    {
+      "id": "senior",
+      "name": "Senior stylist"
+    }
+  ],
   "resources": [
     {
       "id": "camille",
       "name": "Camille",
+      "levelId": "senior",
       "serviceIds": ["balayage", "fringe-trim"],
       "hours": {
         "monday": [],
@@ -168,5 +181,15 @@
       }
     }
   ],
-  "closures": []
+  "closures": [],
+  "rules": [
+    {
+      "kind": "new-client-deposit",
+      "id": "new-client-deposit",
+      "deposit": {
+        "kind": "percentage",
+        "percent": 50
+      }
+    }
+  ]
 }

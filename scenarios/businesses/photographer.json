@@ -52,6 +52,7 @@
       "afterMinutes": 30
     }
   },
+  "levels": [],
   "resources": [
     {
       "id": "clara",
@@ -98,5 +99,6 @@
       }
     }
   ],
-  "closures": []
+  "closures": [],
+  "rules": []
 }

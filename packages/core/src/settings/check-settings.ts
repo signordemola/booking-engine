@@ -182,6 +182,78 @@ const findWrongClosures = (settings: BusinessSettings): SettingsProblem[] => {
   return problems;
 };
 
+const serviceIdsOf = (rule: BusinessSettings["rules"][number]): string[] => {
+  switch (rule.kind) {
+    case "prerequisite":
+    case "consent":
+    case "book-alone":
+      return rule.serviceIds;
+    case "fill-window":
+      return [rule.fillServiceId, rule.fullSetServiceId];
+    case "new-client-deposit":
+      return [];
+  }
+};
+
+const findRulesWithMissingServices = (
+  settings: BusinessSettings,
+): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+  const knownServiceIds = settings.services.map((service) => service.id);
+
+  settings.rules.forEach((rule, ruleIndex) => {
+    serviceIdsOf(rule).forEach((serviceId) => {
+      if (!knownServiceIds.includes(serviceId)) {
+        problems.push({
+          code: "settings.missing-service",
+          path: ["rules", ruleIndex],
+          message: `The rule "${rule.id}" names the service "${serviceId}", which does not exist.`,
+        });
+      }
+    });
+  });
+
+  return problems;
+};
+
+const findMissingLevels = (settings: BusinessSettings): SettingsProblem[] => {
+  const problems: SettingsProblem[] = [];
+  const knownLevelIds = settings.levels.map((level) => level.id);
+  const isUnknown = (levelId: string) => !knownLevelIds.includes(levelId);
+
+  settings.resources.forEach((resource, index) => {
+    if (resource.levelId !== undefined && isUnknown(resource.levelId)) {
+      problems.push({
+        code: "settings.missing-level",
+        path: ["resources", index, "levelId"],
+        message: `"${resource.name}" has the level "${resource.levelId}", which does not exist.`,
+      });
+    }
+  });
+  settings.services.forEach((service, index) => {
+    const levelPrices =
+      service.price.kind === "fixed" ? (service.price.levelPrices ?? []) : [];
+    levelPrices.forEach((levelPrice, levelIndex) => {
+      if (isUnknown(levelPrice.levelId)) {
+        problems.push({
+          code: "settings.missing-level",
+          path: [
+            "services",
+            index,
+            "price",
+            "levelPrices",
+            levelIndex,
+            "levelId",
+          ],
+          message: `"${service.name}" has a price for the level "${levelPrice.levelId}", which does not exist.`,
+        });
+      }
+    });
+  });
+
+  return problems;
+};
+
 export const findSettingsProblems = (
   settings: BusinessSettings,
 ): SettingsProblem[] => [
@@ -199,4 +271,8 @@ export const findSettingsProblems = (
   ...findWrongOpenWindows(settings),
   ...findMissingServices(settings),
   ...findWrongClosures(settings),
+  ...findRepeatedIds(["levels"], settings.levels),
+  ...findMissingLevels(settings),
+  ...findRepeatedIds(["rules"], settings.rules),
+  ...findRulesWithMissingServices(settings),
 ];

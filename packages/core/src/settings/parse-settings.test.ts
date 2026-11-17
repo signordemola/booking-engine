@@ -7,8 +7,16 @@ import {
 } from "../testing/demo-businesses.js";
 import { parseSettings } from "./parse-settings.js";
 
-const lashByNadia = { ...lashStudio, resources: [] };
-const nadia = lashStudio.resources[0];
+const lashByNadia = {
+  ...lashStudio,
+  services: lashStudio.services.slice(0, 2),
+  resources: [],
+  rules: [],
+};
+const nadia = {
+  ...lashStudio.resources[0],
+  serviceIds: ["hybrid-full-set", "lash-removal"],
+};
 
 const hybridFullSet = lashByNadia.services[0];
 const lashRemoval = lashByNadia.services[1];
@@ -489,6 +497,70 @@ test.each([
     },
     path: "schedule.gaps.afterMinutes",
     message: "Enter a whole number of minutes, 0 or more.",
+  },
+  {
+    problem: "a rule kind that does not exist",
+    code: "input.invalid",
+    input: { ...lashByNadia, rules: [{ kind: "vip-only", id: "vip" }] },
+    path: "rules[0].kind",
+    message:
+      "Choose a rule kind: prerequisite, consent, book-alone, fill-window or new-client-deposit.",
+  },
+  {
+    problem: "a rule that names a service that does not exist",
+    code: "settings.missing-service",
+    input: {
+      ...lashByNadia,
+      rules: [
+        { kind: "book-alone", id: "tests-alone", serviceIds: ["patch-test"] },
+      ],
+    },
+    path: "rules[0]",
+    message:
+      'The rule "tests-alone" names the service "patch-test", which does not exist.',
+  },
+  {
+    problem: "two rules with the same id",
+    code: "settings.repeated-id",
+    input: {
+      ...lashByNadia,
+      rules: [
+        { kind: "book-alone", id: "alone", serviceIds: ["lash-removal"] },
+        { kind: "book-alone", id: "alone", serviceIds: ["hybrid-full-set"] },
+      ],
+    },
+    path: "rules[1].id",
+    message:
+      'The id "alone" is used more than once. Each id must be different.',
+  },
+  {
+    problem: "a stylist with a level that does not exist",
+    code: "settings.missing-level",
+    input: { ...lashByNadia, resources: [{ ...nadia, levelId: "master" }] },
+    path: "resources[0].levelId",
+    message: '"Nadia" has the level "master", which does not exist.',
+  },
+  {
+    problem: "a price for a level that does not exist",
+    code: "settings.missing-level",
+    input: {
+      ...lashByNadia,
+      services: [
+        {
+          ...hybridFullSet,
+          price: {
+            kind: "fixed",
+            amountMinor: 12000,
+            durationMinutes: 150,
+            levelPrices: [{ levelId: "master", amountMinor: 15000 }],
+          },
+        },
+        lashRemoval,
+      ],
+    },
+    path: "services[0].price.levelPrices[0].levelId",
+    message:
+      '"Hybrid full set" has a price for the level "master", which does not exist.',
   },
 ])("rejects $problem", ({ input, code, path, message }) => {
   expect(errorsFor(input)).toEqual([{ code, path, message }]);
