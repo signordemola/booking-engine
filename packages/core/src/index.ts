@@ -1,3 +1,19 @@
+export {
+  applyBookingAction,
+  type BookingChange,
+} from "./bookings/apply-booking-action.js";
+export {
+  occupiesSlot,
+  type Booking,
+  type BookingAction,
+  type BookingEvent,
+  type BookingRequest,
+  type BookingStatus,
+} from "./bookings/booking-schema.js";
+export {
+  decideBooking,
+  type BookingDecision,
+} from "./bookings/decide-booking.js";
 export type { Problem, Reason, Result } from "./lib/result.js";
 export { operations, runOperation, type Operation } from "./operations.js";
 export type { TaxLine } from "./quotes/calculate-tax.js";

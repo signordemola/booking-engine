@@ -188,6 +188,7 @@ const scheduleSchema = z.strictObject({
   slotStepMinutes: wholeNumberSchema,
   minNoticeMinutes: minutesSchema,
   maxAdvanceDays: wholeNumberSchema,
+  holdMinutes: wholeNumberSchema,
   gaps: gapsSchema,
 });
 

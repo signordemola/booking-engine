@@ -1,0 +1,44 @@
+{
+  "id": "retainer-paid-confirms-the-date",
+  "title": "When the retainer is paid, the held date is confirmed",
+  "source": "https://www.demolastudio.com/for/photographers",
+  "business": "photographer",
+  "operation": "booking.apply-action",
+  "facts": {
+    "now": "2026-11-17T10:12:00Z"
+  },
+  "request": {
+    "booking": {
+      "businessId": "clara-monet-photography",
+      "bookingId": "booking-1001",
+      "clientId": "client-amelia",
+      "resourceId": "clara",
+      "status": "pending",
+      "start": "2026-11-20T10:00:00Z",
+      "end": "2026-11-20T11:30:00Z",
+      "blockedStart": "2026-11-20T09:30:00Z",
+      "blockedEnd": "2026-11-20T12:00:00Z",
+      "holdExpiresAt": "2026-11-17T10:30:00Z",
+      "createdAt": "2026-11-17T10:00:00Z",
+      "currency": "GBP",
+      "totalMinor": 25000,
+      "dueTodayMinor": 7500
+    },
+    "action": "deposit-paid"
+  },
+  "expect": {
+    "ok": true,
+    "value": {
+      "booking": {
+        "status": "confirmed",
+        "holdExpiresAt": null
+      },
+      "events": [
+        {
+          "type": "booking.confirmed",
+          "at": "2026-11-17T10:12:00Z"
+        }
+      ]
+    }
+  }
+}

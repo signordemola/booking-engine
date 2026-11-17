@@ -1,4 +1,10 @@
 import type { z } from "zod";
+import { applyBookingAction } from "./bookings/apply-booking-action.js";
+import {
+  applyBookingActionInputSchema,
+  decideBookingInputSchema,
+} from "./bookings/booking-schema.js";
+import { decideBooking } from "./bookings/decide-booking.js";
 import type { Result } from "./lib/result.js";
 import { createQuote, createQuoteInputSchema } from "./quotes/create-quote.js";
 import { parseSettings, settingsSchema } from "./settings/parse-settings.js";
@@ -44,6 +50,20 @@ export const operations: Operation[] = [
       "Say if one start time is free, and give the reasons when it is not.",
     inputSchema: checkSlotInputSchema,
     run: checkSlot,
+  },
+  {
+    name: "booking.decide",
+    summary:
+      "Decide a booking for a start time: the record to save, its quote and what happened.",
+    inputSchema: decideBookingInputSchema,
+    run: decideBooking,
+  },
+  {
+    name: "booking.apply-action",
+    summary:
+      "Apply one action to a booking: deposit paid, hold run out, cancel, complete or no-show.",
+    inputSchema: applyBookingActionInputSchema,
+    run: applyBookingAction,
   },
 ];
 

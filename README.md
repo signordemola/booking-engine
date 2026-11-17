@@ -6,7 +6,7 @@ It is a booking engine for booking platforms: one source of truth for availabili
 
 ## Status
 
-This project is at the start. **You cannot take a booking with it yet.** The money side and the time side work and are tested: it can price a booking and list the free times. It cannot yet decide or record a booking.
+This project is at the start. **You cannot take a booking with it yet.** It can price a booking, list the free times and decide a booking, and an in-memory store saves bookings safely. It has no database store yet, and no cancellation rules.
 
 | Stage                                                             | Status      |
 | ----------------------------------------------------------------- | ----------- |
@@ -14,8 +14,8 @@ This project is at the start. **You cannot take a booking with it yet.** The mon
 | Contracts: scenario files, operation shape, public API            | Done        |
 | Money: add-ons, deposit, tax, fees, balance                       | Done        |
 | Time: hours, breaks, closures, gaps, lead time, clock changes     | Done        |
-| Bookings: no overlap, hold during payment, safe retries           | Next        |
-| Rules: patch test, consultation, consent, fill or full set, staff | Not started |
+| Bookings: no overlap, hold during payment, safe retries           | Done        |
+| Rules: patch test, consultation, consent, fill or full set, staff | Next        |
 | Policies: cancellation, refund, reschedule                        | Not started |
 | Follow-ups: reminders, balance links, hold expiry                 | Not started |
 | First products: tools for AI agents, scenario pages               | Not started |
@@ -28,6 +28,8 @@ What works today:
 - `createQuote` prices what a client picked: line items, tax, the amount due today and the balance, with the rule behind each deposit. It handles add-ons, fees, prices by the hour, four kinds of deposit, and tax that is added on top or included in the price.
 - `listSlots` lists the free start times on a date, for one or more staff or rooms. It applies opening hours, lunch breaks, closures, the length of the booking, gaps between bookings, the notice a booking needs and the busy times. `checkSlot` says if one time is free, and why not.
 - Time zones are handled with the built-in `Temporal` API, with tests for the days when the clocks change in Toronto and in London.
+- `decideBooking` decides a booking: it checks the time, prices it and returns the record to save. A booking with money due today is held, and it is confirmed when the deposit is paid. `applyBookingAction` moves a booking between statuses.
+- `packages/store` saves bookings safely. A test sends 20 requests for the same time at the same moment, and exactly 1 gets it. A retry with the same booking id makes no second booking. It has an in-memory store; a Postgres store comes later.
 - Real cases live as JSON files in [`scenarios/`](./scenarios) and run as tests. To add a case, add one file.
 
 [PROGRESS.md](./PROGRESS.md) has the session log. [docs/how-the-code-works.md](./docs/how-the-code-works.md) is a reading guide to the code.
@@ -57,6 +59,7 @@ CI runs the same four checks on every push, on Node 26.
 
 ```
 packages/core                 the engine
+packages/store                saves bookings safely (in memory for now)
 scenarios                     real cases as data files, run as tests
 docs/architecture.md          the design: one core, many products
 docs/roadmap.md               the stages and what each one proves

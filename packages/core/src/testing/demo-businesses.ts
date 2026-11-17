@@ -71,6 +71,7 @@ export const lashStudio: BusinessSettings = {
     slotStepMinutes: 30,
     minNoticeMinutes: 120,
     maxAdvanceDays: 60,
+    holdMinutes: 15,
     gaps: {
       beforeMinutes: 0,
       afterMinutes: 15,
@@ -184,6 +185,7 @@ export const salon: BusinessSettings = {
     slotStepMinutes: 15,
     minNoticeMinutes: 60,
     maxAdvanceDays: 90,
+    holdMinutes: 10,
     gaps: {
       beforeMinutes: 0,
       afterMinutes: 10,
@@ -346,6 +348,7 @@ export const hireStudio: BusinessSettings = {
     slotStepMinutes: 60,
     minNoticeMinutes: 1440,
     maxAdvanceDays: 180,
+    holdMinutes: 30,
     gaps: {
       beforeMinutes: 0,
       afterMinutes: 30,
@@ -459,6 +462,7 @@ export const photographer: BusinessSettings = {
     slotStepMinutes: 30,
     minNoticeMinutes: 2880,
     maxAdvanceDays: 365,
+    holdMinutes: 30,
     gaps: {
       beforeMinutes: 30,
       afterMinutes: 30,

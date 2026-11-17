@@ -1,0 +1,38 @@
+{
+  "id": "booking-a-taken-time-is-refused",
+  "title": "A hire cannot be booked over a time that is already taken",
+  "source": "https://www.demolastudio.com/for/studio-hire",
+  "business": "studio-hire",
+  "operation": "booking.decide",
+  "facts": {
+    "now": "2026-11-17T15:00:00Z",
+    "busy": [
+      {
+        "resourceId": "daylight-room",
+        "start": "2026-11-21T15:00:00Z",
+        "end": "2026-11-21T19:30:00Z"
+      }
+    ]
+  },
+  "request": {
+    "bookingId": "booking-3002",
+    "clientId": "client-priya",
+    "start": "2026-11-21T12:00:00-05:00",
+    "services": [
+      {
+        "serviceId": "daylight-studio",
+        "hours": 2,
+        "addOns": []
+      }
+    ]
+  },
+  "expect": {
+    "ok": false,
+    "errors": [
+      {
+        "code": "slot.busy",
+        "message": "This time is already taken."
+      }
+    ]
+  }
+}

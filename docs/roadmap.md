@@ -16,8 +16,8 @@ The plan for building the engine in [architecture.md](./architecture.md). It is 
 | 1     | Contracts      | The homepage quote (US$130) runs from a scenario file                             | Done        |
 | 2     | Money          | US$130 total, US$30 due today, US$100 balance; tax in Canada and the UK           | Done        |
 | 3     | Time           | Studio hire, Saturday 10:00 to 14:00, with a gap between hires                    | Done        |
-| 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Next        |
-| 5     | Rules          | Only times at least 48 hours after the patch test                                 | Not started |
+| 4     | Bookings       | A date is held only when the retainer is paid; 20 requests at once make 1 booking | Done        |
+| 5     | Rules          | Only times at least 48 hours after the patch test                                 | Next        |
 | 6     | Policies       | "Non-refundable. Moves once."                                                     | Not started |
 | 7     | Follow-ups     | A reminder is due the day before; a job that runs twice sends once                | Not started |
 | 8     | First products | An AI assistant books a lash appointment and obeys the patch test rule            | Not started |
@@ -59,13 +59,16 @@ Done: the studio hire case, both clock-change days and the two-stylist cases run
 
 ### Stage 4: Bookings
 
-- Decide a booking: the engine returns what to save and which events happened.
-- A hold while the client pays, with an expiry. The booking is confirmed when the deposit is paid.
-- Status changes: pending, confirmed, completed, cancelled, no-show.
-- Retry keys, so a repeated request changes nothing.
-- The store: the three promises, an in-memory store that keeps them, and a test that sends 20 requests at the same moment.
+- `decideBooking`: the engine checks the time, prices the booking and returns the record to save, its quote and the events.
+- A hold while the client pays, for the minutes the owner sets. The booking is confirmed when the deposit is paid. A booking with nothing to pay today is confirmed at once.
+- `applyBookingAction`: deposit paid, hold run out, cancel, complete, no-show. Each move is checked against a table.
+- A new package, `packages/store`: the three promises a store must keep, an in-memory store, and two workflows (`bookSlot`, `changeBooking`) that read, decide and save.
+- A repeated request with the same booking id returns the first booking.
+- Two businesses in one store never see each other's bookings.
 
-Done when: the photographer case runs as a scenario, and the parallel test gives exactly one booking.
+Done: the photographer case runs as scenarios, and 20 requests at the same moment give exactly one booking.
+
+Not built here: money rules for a cancellation (stage 6), and the Postgres store (after stage 8, when a client build needs it).
 
 ### Stage 5: Rules
 
